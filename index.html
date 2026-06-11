@@ -2336,6 +2336,7 @@
         Guantes:         r.Guantes          || 'NO',
         Estado:          r.Estado           || 'Pendiente',
         Correo:          r.Correo           || '',
+        DatosAdjuntos:   r.Datos_adjuntos   || '',
       });
 
       // Expandir: una fila por EPP
@@ -2399,6 +2400,12 @@
     });
 
     gallery.innerHTML = sorted.map(s => {
+      const tieneAdjunto = s.DatosAdjuntos && s.DatosAdjuntos.length > 0;
+      const clipIcon = tieneAdjunto
+        ? `<span title="Tiene adjunto" style="display:flex;align-items:center;gap:3px;font-size:11px;color:#1B3A6B;font-weight:600;">
+             <i class="ti ti-paperclip" style="font-size:14px;color:#1B3A6B"></i>
+           </span>`
+        : '';
       const badge = s.Estado === 'Pendiente'
         ? '<span class="s4-badge badge-pendiente">Pendiente</span>'
         : '<span class="s4-badge badge-entregado">Entregado</span>';
@@ -2429,6 +2436,7 @@
             <div class="s4-meta-row">
               <span class="s4-meta-label">Estado :</span>
               <span>${badge}</span>
+              ${clipIcon}
             </div>
           </div>
         </div>`;
