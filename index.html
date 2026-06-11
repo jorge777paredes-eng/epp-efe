@@ -1239,6 +1239,73 @@
   }
   .licp1-btn-enviar:active { background: #142d54; }
   .licp1-btn-cerrar:active  { background: #f5f5f5; }
+
+  /* ══ POPUP CONFIRMAR ══ */
+  .confirm-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .confirm-overlay.open { display: flex; }
+  .confirm-popup {
+    background: #fff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 320px;
+    padding: 28px 24px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    animation: slideUp 0.2s ease;
+    text-align: center;
+  }
+  .confirm-icon { margin-bottom: 4px; }
+  .confirm-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1B3A6B;
+  }
+  .confirm-msg {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.5;
+  }
+  .confirm-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+    margin-top: 6px;
+  }
+  .confirm-btn-cancel {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    color: #555;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+  .confirm-btn-ok {
+    background: #C8102E;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+  .confirm-btn-ok:active { background: #a00d24; }
+  .confirm-btn-cancel:active { background: #f5f5f5; }
 </style>
 </head>
 <body>
@@ -1636,6 +1703,19 @@
 </div>
 
 <!-- ══ POPUP FIRMA ══ -->
+<!-- ══ POPUP CONFIRMAR ELIMINAR ══ -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-popup">
+    <div class="confirm-icon"><i class="ti ti-alert-triangle" style="font-size:32px;color:#C8102E"></i></div>
+    <div class="confirm-title">Eliminar Solicitud</div>
+    <div class="confirm-msg">¿Estás seguro que deseas eliminar esta solicitud? Esta acción no se puede deshacer.</div>
+    <div class="confirm-btns">
+      <button class="confirm-btn-cancel" onclick="cerrarConfirm()">Cancelar</button>
+      <button class="confirm-btn-ok" id="confirmOkBtn">Eliminar</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <div class="firma-overlay" id="firmaOverlay">
@@ -2352,10 +2432,21 @@
     }).join('');
   }
 
-  /* ── ELIMINAR SOLICITUD POR ID ── */
+  /* ── POPUP CONFIRMAR ELIMINAR ── */
+  let _idPendienteEliminar = null;
+
   function confirmarEliminar(idRegistro) {
-    if (!confirm('¿Eliminar esta solicitud? Esta acción no se puede deshacer.')) return;
-    eliminarSolicitud(idRegistro);
+    _idPendienteEliminar = idRegistro;
+    document.getElementById('confirmOkBtn').onclick = () => {
+      cerrarConfirm();
+      eliminarSolicitud(_idPendienteEliminar);
+    };
+    document.getElementById('confirmOverlay').classList.add('open');
+  }
+
+  function cerrarConfirm() {
+    document.getElementById('confirmOverlay').classList.remove('open');
+    _idPendienteEliminar = null;
   }
 
   async function eliminarSolicitud(idRegistro) {
