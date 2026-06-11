@@ -2074,6 +2074,39 @@
     'Authorization': `Bearer ${SUPABASE_KEY}`
   };
 
+  /* ── SUBIR ARCHIVOS A SUPABASE STORAGE ── */
+  const BUCKET = 'epp-adjuntos';
+
+  async function subirArchivo(file, rut) {
+    const ext      = file.name.split('.').pop();
+    const ts       = Date.now();
+    const fileName = `${rut.replace(/\./g,'').replace(/-/g,'')}_${ts}.${ext}`;
+    const path     = `calzado-especial/${fileName}`;
+
+    const resp = await fetch(
+      `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${path}`,
+      {
+        method:  'POST',
+        headers: {
+          'apikey':        SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type':  file.type,
+          'x-upsert':      'true'
+        },
+        body: file
+      }
+    );
+
+    if (!resp.ok) {
+      const txt = await resp.text();
+      console.error('Storage upload error:', resp.status, txt);
+      return null;
+    }
+
+    // URL pública del archivo
+    return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`;
+  }
+
   /* ── ENVIAR A SUPABASE ── */
   async function enviarSolicitud() {
     const tipo = document.getElementById('tipoCalzado').value;
@@ -2101,7 +2134,21 @@
     const tipoLabel = tipo === 'especial' ? 'Calzado Seg. Especial'
                     : tipo === 'normal'   ? 'Calzado Seg. Normal' : 'NO';
 
-    // Payload con nombres EXACTOS de columnas de Supabase
+    showToast('Guardando solicitud...');
+
+    // Subir archivos adjuntos si los hay
+    let urlsAdjuntos = '';
+    if (tipo === 'especial' && adjuntosLista.length > 0) {
+      showToast('Subiendo archivos adjuntos...');
+      const urls = [];
+      for (const file of adjuntosLista) {
+        const url = await subirArchivo(file, rut);
+        if (url) urls.push(url);
+      }
+      urlsAdjuntos = urls.join(',');
+      console.log('URLs adjuntos:', urlsAdjuntos);
+    }
+
     const payload = {
       Funcionario:       funcionarioNombre,
       Rut:               rut,
@@ -2113,10 +2160,10 @@
       Casco:             casco,
       Guantes:           guantes,
       Correo:            correo,
-      Estado:            'Pendiente'
+      Estado:            'Pendiente',
+      Datos_adjuntos:    urlsAdjuntos || null
     };
 
-    showToast('Guardando solicitud...');
     console.log('Enviando a Supabase:', payload);
 
     try {
@@ -2130,7 +2177,7 @@
       console.log('Supabase status:', resp.status, 'body:', text);
 
       if (resp.status === 200 || resp.status === 201) {
-        showToast('\u2713 Solicitud guardada correctamente');
+        showToast('✓ Solicitud guardada correctamente');
         setTimeout(() => goTo('screen1'), 2000);
       } else {
         let hint = '';
