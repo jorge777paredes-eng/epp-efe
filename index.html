@@ -1366,9 +1366,9 @@
       <div class="field-row">
         <div class="field-label">Chaqueta Geóloga</div>
         <div class="field-select-wrap">
-          <select class="field-select">
+          <select class="field-select" id="chaquetaGeologa">
             <option>NO</option><option>XS</option><option>S</option>
-            <option>M</option><option>L</option><option>XL</option><option>XXL</option>
+            <option>M</option><option>L</option><option>XL</option><option>XXL</option><option>XXXL</option>
           </select>
           <i class="ti ti-chevron-down select-arrow" aria-hidden="true"></i>
         </div>
@@ -1377,7 +1377,7 @@
       <div class="field-row">
         <div class="field-label">Casco</div>
         <div class="field-select-wrap">
-          <select class="field-select">
+          <select class="field-select" id="cascoSelect">
             <option>NO</option><option>SI</option>
           </select>
           <i class="ti ti-chevron-down select-arrow" aria-hidden="true"></i>
@@ -1387,7 +1387,7 @@
       <div class="field-row">
         <div class="field-label">Guantes</div>
         <div class="field-select-wrap">
-          <select class="field-select">
+          <select class="field-select" id="guantesSelect">
             <option>NO</option><option>SI</option>
           </select>
           <i class="ti ti-chevron-down select-arrow" aria-hidden="true"></i>
@@ -2125,10 +2125,9 @@
     const cargo    = document.getElementById('s3Cargo').textContent;
     const fecha    = document.getElementById('s3Fecha').textContent;
     const talla    = document.getElementById('tallaCalzado').value;
-    const selects  = document.querySelectorAll('#screen3 .field-select');
-    const chaqueta = selects[1].value;
-    const casco    = selects[2].value;
-    const guantes  = selects[3].value;
+    const chaqueta = document.getElementById('chaquetaGeologa').value;
+    const casco    = document.getElementById('cascoSelect').value;
+    const guantes  = document.getElementById('guantesSelect').value;
     const func     = funcionarios.find(f => f.nombre === funcionarioNombre);
     const correo   = func ? func.email : '';
     const tipoLabel = tipo === 'especial' ? 'Calzado Seg. Especial'
