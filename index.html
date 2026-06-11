@@ -1885,7 +1885,10 @@
   let calView = { y: hoyReal.getFullYear(), m: hoyReal.getMonth() };
 
   function formatFechaObj(d) {
-    return `${d.getDate()} ${MESES[d.getMonth()]} ${d.getFullYear()}`;
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    return `${dd}-${mm}-${yyyy}`;
   }
   function setFechaDisplay() {
     document.getElementById('s3Fecha').textContent = formatFechaObj(selectedDate);
@@ -2171,14 +2174,35 @@
 
       // Normalizar columnas (Supabase puede usar nombres distintos)
       // Mapear cualquier variación de nombre de columna
-      // Columnas exactas según tabla Supabase
+  function normalizarFecha(f) {
+    if (!f) return '';
+    // Si ya está en formato dd-mm-yyyy lo devuelve igual
+    if (/^\d{2}-\d{2}-\d{4}$/.test(f)) return f;
+    // Si está en formato yyyy-mm-dd (ISO)
+    if (/^\d{4}-\d{2}-\d{2}/.test(f)) {
+      const d = new Date(f);
+      if (!isNaN(d)) return formatFechaObj(d);
+    }
+    // Si está en formato "8 junio 2026" o "10 diciembre 2025"
+    const mesesMap = {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,
+                      julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12};
+    const m = f.toLowerCase().match(/(\d{1,2})\s+([a-záéíóú]+)\s+(\d{4})/);
+    if (m && mesesMap[m[2]]) {
+      const dd = String(m[1]).padStart(2,'0');
+      const mm = String(mesesMap[m[2]]).padStart(2,'0');
+      return `${dd}-${mm}-${m[3]}`;
+    }
+    return f;
+  }
+
+  // Columnas exactas según tabla Supabase
       const normalize = r => ({
         id:              r.ID || r.id || Math.random(),
         ID:              r.ID || r.id || null,
         Funcionario:     r.Funcionario      || '',
         Rut:             r.Rut              || '',
         Cargo:           r.Cargo            || '',
-        FechaSolicitud:  r.Fecha_Solictud || r.Fecha_Solicitud || '',
+        FechaSolicitud:  normalizarFecha(r.Fecha_Solictud || r.Fecha_Solicitud || ''),
         TipoCalzado:     r.Tipo_Calzado     || 'NO',
         TallaCalzado:    r.Talla_Calzado    || '-',
         ChaquetaGeologa: r.Chaqueta_Geologa || 'NO',
@@ -2257,11 +2281,6 @@
             <div class="s4-card-nombre">${s.Funcionario}</div>
             <div style="display:flex;gap:6px;align-items:center">
               <button class="btn-entregar" onclick="abrirEntrega('${s._uid}')" ${btnDisabled}>Entregar</button>
-              <button onclick="confirmarEliminar('${s._uid}', ${s.ID})" title="Eliminar solicitud"
-                style="background:none;border:2px solid #C8102E;border-radius:50%;width:30px;height:30px;
-                       display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
-                <i class="ti ti-x" style="font-size:13px;color:#C8102E;"></i>
-              </button>
             </div>
           </div>
           <div class="s4-card-meta">
@@ -2280,39 +2299,6 @@
           </div>
         </div>`;
     }).join('');
-  }
-
-  /* ── Eliminar registro de Supabase ── */
-  function confirmarEliminar(uid, idRegistro) {
-    if (!confirm('¿Eliminar esta solicitud? Esta acción no se puede deshacer.')) return;
-    eliminarSolicitud(uid, idRegistro);
-  }
-
-  async function eliminarSolicitud(uid, idRegistro) {
-    showToast('Eliminando...');
-    try {
-      const resp = await fetch(
-        `${SUPABASE_URL}/rest/v1/${TABLA_EPP}?ID=eq.${idRegistro}`,
-        {
-          method:  'DELETE',
-          headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' }
-        }
-      );
-      if (resp.ok || resp.status === 204) {
-        // Eliminar localmente todas las filas del mismo ID
-        solicitudes = solicitudes.filter(s => s.ID !== idRegistro);
-        solicitudesFiltradas = solicitudesFiltradas.filter(s => s.ID !== idRegistro);
-        renderGallery();
-        showToast('✓ Solicitud eliminada');
-      } else {
-        const txt = await resp.text();
-        console.error('Delete error:', resp.status, txt);
-        showToast('Error al eliminar. Intente nuevamente.');
-      }
-    } catch(e) {
-      console.error('Delete fetch error:', e);
-      showToast('Error de conexión.');
-    }
   }
 
   function abrirEntrega(uid) {
