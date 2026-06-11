@@ -2343,14 +2343,17 @@
       rawData.forEach((raw, idx) => {
         const s = normalize(raw);
         const uid = raw.ID || raw.id || idx;
+        // Guardar el ID real de Supabase en cada fila expandida
+        const supabaseID = raw.ID || raw.id || null;
+        console.log('raw.ID:', raw.ID, 'raw.id:', raw.id, 'supabaseID:', supabaseID);
         if (s.TipoCalzado && s.TipoCalzado !== 'NO')
-          solicitudes.push({ ...s, _eppLabel: s.TipoCalzado, _eppTalla: s.TallaCalzado, _eppKey: 'calzado',  _uid: uid + '_c'  });
+          solicitudes.push({ ...s, ID: supabaseID, _eppLabel: s.TipoCalzado, _eppTalla: s.TallaCalzado, _eppKey: 'calzado',  _uid: uid + '_c'  });
         if (s.ChaquetaGeologa && s.ChaquetaGeologa !== 'NO')
-          solicitudes.push({ ...s, _eppLabel: 'Chaqueta Geóloga', _eppTalla: s.ChaquetaGeologa, _eppKey: 'chaqueta', _uid: uid + '_ch' });
+          solicitudes.push({ ...s, ID: supabaseID, _eppLabel: 'Chaqueta Geóloga', _eppTalla: s.ChaquetaGeologa, _eppKey: 'chaqueta', _uid: uid + '_ch' });
         if (s.Casco === 'SI' || s.Casco === 'Si' || s.Casco === 'si')
-          solicitudes.push({ ...s, _eppLabel: 'Casco',    _eppTalla: '', _eppKey: 'casco',   _uid: uid + '_ca' });
+          solicitudes.push({ ...s, ID: supabaseID, _eppLabel: 'Casco',    _eppTalla: '', _eppKey: 'casco',   _uid: uid + '_ca' });
         if (s.Guantes === 'SI' || s.Guantes === 'Si' || s.Guantes === 'si')
-          solicitudes.push({ ...s, _eppLabel: 'Guantes',  _eppTalla: '', _eppKey: 'guantes', _uid: uid + '_g'  });
+          solicitudes.push({ ...s, ID: supabaseID, _eppLabel: 'Guantes',  _eppTalla: '', _eppKey: 'guantes', _uid: uid + '_g'  });
       });
 
       if (solicitudes.length === 0) {
@@ -2451,6 +2454,7 @@
 
   async function eliminarSolicitud(idRegistro) {
     showToast('Eliminando...');
+    console.log('Eliminando ID:', idRegistro);
     try {
       const resp = await fetch(
         `${SUPABASE_URL}/rest/v1/${TABLA_EPP}?ID=eq.${idRegistro}`,
@@ -2460,7 +2464,6 @@
         }
       );
       if (resp.ok || resp.status === 204) {
-        // Eliminar solo las filas con ese ID exacto
         solicitudes = solicitudes.filter(s => s.ID !== idRegistro);
         solicitudesFiltradas = solicitudesFiltradas.filter(s => s.ID !== idRegistro);
         renderGallery();
