@@ -2462,13 +2462,12 @@
   let _idPendienteEliminar = null;
 
   function confirmarEliminar(uid) {
-    const s = solicitudes.find(x => x._uid === uid);
-    if (!s) { showToast('No se encontró la solicitud'); return; }
-    _idPendienteEliminar = s.ID;
-    console.log('Confirmar eliminar uid:', uid, 'ID:', s.ID);
+    // Extraer ID numérico del uid (ej: "18_ca" -> 18)
+    const idFromUid = parseInt(uid.split('_')[0]);
+    console.log('Confirmar eliminar uid:', uid, 'idFromUid:', idFromUid);
     document.getElementById('confirmOkBtn').onclick = () => {
       cerrarConfirm();
-      eliminarSolicitud(_idPendienteEliminar, uid);
+      eliminarSolicitud(idFromUid, uid);
     };
     document.getElementById('confirmOverlay').classList.add('open');
   }
@@ -3080,4 +3079,3 @@
 </script>
 </body>
 </html>
-<!-- v3 -->
