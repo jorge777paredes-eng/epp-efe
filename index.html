@@ -2469,11 +2469,12 @@
       solicitudes = [];
       rawData.forEach((raw, idx) => {
         const s = normalize(raw);
-        const uid = raw.ID || raw.id || idx;
-        // Guardar el ID real de Supabase en cada fila expandida
-        const supabaseID = raw.ID || raw.id || null;
+        // Detectar el nombre exacto del campo ID que devuelve Supabase
+        const idKey = Object.keys(raw).find(k => k.toLowerCase() === 'id') || null;
+        const supabaseID = idKey ? raw[idKey] : null;
+        const uid = supabaseID || idx;
         const datosAdj  = raw.Datos_adjuntos || raw.datos_adjuntos || '';
-        console.log('raw.ID:', raw.ID, 'raw.id:', raw.id, 'supabaseID:', supabaseID);
+        if (idx === 0) console.log('KEYS Supabase:', Object.keys(raw), '| idKey:', idKey, '| supabaseID:', supabaseID);
         if (s.TipoCalzado && s.TipoCalzado !== 'NO')
           solicitudes.push({ ...s, ID: supabaseID, DatosAdjuntos: datosAdj, _eppLabel: s.TipoCalzado, _eppTalla: s.TallaCalzado, _eppKey: 'calzado',  _uid: uid + '_c'  });
         if (s.ChaquetaGeologa && s.ChaquetaGeologa !== 'NO')
@@ -2837,7 +2838,10 @@
             ...SB_HEADERS,
             'Prefer': 'return=minimal'
           },
-          body: JSON.stringify({ Estado: 'Entregado' })
+          body: JSON.stringify({
+            Estado: 'Entregado',
+            Fecha_Entrega: new Date().toLocaleDateString('es-CL', {day:'2-digit',month:'2-digit',year:'numeric'})
+          })
         }
       );
 
@@ -2855,6 +2859,8 @@
 
       document.getElementById('btnEnviarDoc').classList.add('active-btn');
       showToast('✓ Entrega guardada correctamente');
+      // Recargar galería para reflejar el cambio en Supabase
+      await loadGallery();
 
     } catch (e) {
       console.error('guardarEntrega error:', e);
