@@ -2834,8 +2834,7 @@
         {
           method: 'PATCH',
           headers: {
-            ...HEADERS,
-            'Content-Type': 'application/json',
+            ...SB_HEADERS,
             'Prefer': 'return=minimal'
           },
           body: JSON.stringify({ Estado: 'Entregado' })
