@@ -2818,14 +2818,49 @@
       showToast('Debe completar ambas firmas');
       return;
     }
+
+    const idRegistro = solicitudActual.ID;
+    if (!idRegistro) {
+      showToast('Error: no se encontró el ID del registro');
+      return;
+    }
+
     showToast('Guardando entrega...');
-    setTimeout(() => {
-      // Marcar solo esa fila (_uid) como Entregado
-      const s = solicitudes.find(x => x._uid === solicitudActual._uid);
-      if (s) s.Estado = 'Entregado';
+
+    try {
+      // PATCH a Supabase: actualizar Estado a Entregado
+      const resp = await fetch(
+        `${SUPABASE_URL}/rest/v1/${TABLA_EPP}?ID=eq.${idRegistro}`,
+        {
+          method: 'PATCH',
+          headers: {
+            ...HEADERS,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ Estado: 'Entregado' })
+        }
+      );
+
+      if (!resp.ok) {
+        const err = await resp.text();
+        console.error('PATCH error:', err);
+        showToast('Error al actualizar en Supabase');
+        return;
+      }
+
+      // Actualizar también en memoria local (todas las filas con mismo ID)
+      solicitudes.forEach(s => {
+        if (s.ID === idRegistro) s.Estado = 'Entregado';
+      });
+
       document.getElementById('btnEnviarDoc').classList.add('active-btn');
       showToast('✓ Entrega guardada correctamente');
-    }, 800);
+
+    } catch (e) {
+      console.error('guardarEntrega error:', e);
+      showToast('Error de conexión al guardar');
+    }
   }
 
   function enviarDocumento() {
