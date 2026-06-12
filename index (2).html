@@ -1,0 +1,3224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>EPP – EFE Trenes de Chile</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .phone-frame {
+    width: 100%;
+    max-width: 420px;
+    min-height: 100vh;
+    background: #ffffff;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; flex-direction: column; min-height: 100vh; }
+  .screen.active { display: flex; }
+
+  /* ══════════════════════════════
+     SCREEN 0 — PORTAL INICIO
+  ══════════════════════════════ */
+  .s0-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px 20px;
+    flex: 1;
+  }
+  .s0-logo img {
+    width: 220px;
+    object-fit: contain;
+  }
+  .s0-subtitle {
+    text-align: center;
+    padding: 0 36px 10px;
+    font-size: 13px;
+    color: #888;
+    letter-spacing: 0.3px;
+  }
+  .s0-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 24px 36px 48px;
+  }
+  .btn-portal {
+    background: #1B3A6B;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 18px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+    transition: background 0.15s, transform 0.1s;
+    -webkit-appearance: none;
+  }
+  .btn-portal:active { background: #142d54; transform: scale(0.98); }
+  .btn-portal.charlas { background: #C8102E; }
+  .btn-portal.charlas:active { background: #a00d24; }
+  .btn-portal-icon {
+    width: 42px;
+    height: 42px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .btn-portal-text { display: flex; flex-direction: column; gap: 2px; }
+  .btn-portal-title { font-size: 14px; font-weight: 700; }
+  .btn-portal-desc { font-size: 11px; font-weight: 400; opacity: 0.82; }
+  .s0-footer {
+    height: 5px;
+    background: linear-gradient(90deg, #1B3A6B 50%, #C8102E 50%);
+    flex-shrink: 0;
+  }
+
+  /* ══════════════════════════════
+     SCREEN 1 — HOME EPP
+  ══════════════════════════════ */
+  .s1-date {
+    text-align: center;
+    padding: 28px 24px 0;
+    font-size: 12px;
+    color: #888;
+    letter-spacing: 0.5px;
+  }
+  .s1-title {
+    text-align: center;
+    padding: 20px 36px 0;
+    font-size: 19px;
+    font-style: italic;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.45;
+  }
+  .s1-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 36px 24px 36px;
+  }
+  .s1-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 44px 40px;
+    flex: 1;
+    justify-content: center;
+  }
+  .btn-main {
+    background: #1B3A6B;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 15px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    letter-spacing: 0.3px;
+    transition: background 0.15s, transform 0.1s;
+    -webkit-appearance: none;
+  }
+  .btn-main:active { background: #142d54; transform: scale(0.98); }
+  .s1-spacer { flex: 1; }
+  .s1-footer {
+    height: 5px;
+    background: linear-gradient(90deg, #1B3A6B 50%, #C8102E 50%);
+    flex-shrink: 0;
+  }
+
+  /* ══════════════════════════════
+     SCREEN 2 — FUNCIONARIOS
+  ══════════════════════════════ */
+  .screen-header {
+    background: #1B3A6B;
+    color: #fff;
+    padding: 16px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    min-height: 56px;
+  }
+  .btn-back {
+    position: absolute;
+    left: 12px;
+    background: none;
+    border: 1.5px solid rgba(255,255,255,0.5);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    -webkit-appearance: none;
+  }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;
+  }
+  .search-bar i { font-size: 22px; color: #aaa; }
+  .search-bar input {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 15px;
+    background: #f7f8fa;
+    color: #222;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .search-bar input:focus { border-color: #1B3A6B; }
+
+  .funcionario-list {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .funcionario-item {
+    padding: 15px 22px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    font-style: italic;
+    color: #222;
+    cursor: pointer;
+    transition: background 0.1s;
+    user-select: none;
+  }
+  .funcionario-item:active { background: #eef2f8; }
+
+  .s2-footer {
+    padding: 14px 44px 24px;
+    border-top: 1px solid #eee;
+    flex-shrink: 0;
+  }
+  .btn-cerrar {
+    width: 100%;
+    background: #1B3A6B;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+  .btn-cerrar:active { background: #142d54; }
+
+  /* ══════════════════════════════
+     SCREEN 3 — SOLICITUD EPP
+  ══════════════════════════════ */
+  .s3-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .field-block { display: flex; flex-direction: column; gap: 4px; }
+  .field-row { display: flex; align-items: center; gap: 10px; }
+  .field-label {
+    font-size: 13px;
+    font-style: italic;
+    color: #1B3A6B;
+    font-weight: 600;
+    min-width: 110px;
+  }
+  .field-label-top {
+    font-size: 13px;
+    font-style: italic;
+    color: #1B3A6B;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  .field-value {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px 11px;
+    font-size: 13px;
+    color: #222;
+    background: #f7f8fa;
+  }
+  .field-date-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .field-date-row .field-value { flex: 1; }
+  .field-date-row i { font-size: 22px; color: #1B3A6B; }
+
+  .field-select-wrap { flex: 1; position: relative; }
+  .field-select {
+    width: 100%;
+    border: none;
+    border-radius: 6px;
+    padding: 9px 34px 9px 11px;
+    font-size: 13px;
+    background: #1B3A6B;
+    color: #fff;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+  }
+  .field-select option { background: #fff; color: #222; }
+  .select-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #fff;
+    font-size: 16px;
+  }
+
+  /* Adjunto panel */
+  .adjunto-panel {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 14px;
+    background: #f7f8fa;
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .adjunto-panel.visible { display: flex; }
+  .adjunto-label {
+    font-size: 13px;
+    font-style: italic;
+    color: #1B3A6B;
+    font-weight: 700;
+  }
+  .adjunto-empty {
+    font-size: 13px;
+    color: #aaa;
+    padding: 2px 0;
+    font-style: italic;
+  }
+  .adjunto-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .adjunto-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #dde3f0;
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .adjunto-item-icon { font-size: 17px; color: #1B3A6B; flex-shrink: 0; }
+  .adjunto-item-name {
+    flex: 1;
+    font-size: 12px;
+    color: #222;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .adjunto-item-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    -webkit-appearance: none;
+  }
+  .adjunto-item-remove i { font-size: 18px; color: #C8102E; }
+  .adjunto-item-remove:active { opacity: 0.6; }
+  .adjunto-actions {
+    display: flex;
+    gap: 10px;
+  }
+  .btn-adjunto {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #333;
+    font-weight: 500;
+    -webkit-appearance: none;
+  }
+  .btn-adjunto:active { background: #eef2f8; }
+  .btn-adjunto i { font-size: 18px; color: #1B3A6B; }
+  .adjunto-note {
+    font-size: 11px;
+    color: #999;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .adjunto-note i { font-size: 14px; }
+
+  .s3-footer {
+    padding: 14px 44px 28px;
+    border-top: 1px solid #eee;
+    flex-shrink: 0;
+  }
+  .btn-enviar {
+    width: 100%;
+    background: #1B3A6B;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 15px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.3;
+    -webkit-appearance: none;
+  }
+  .btn-enviar:active { background: #142d54; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #1B3A6B;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: transform 0.3s ease;
+    z-index: 999;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Sin resultados */
+  .no-results {
+    padding: 30px 20px;
+    text-align: center;
+    color: #aaa;
+    font-size: 14px;
+    display: none;
+  }
+
+  /* ── CALENDARIO ── */
+  .cal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .cal-overlay.open { display: flex; }
+  .cal-box {
+    background: #fff;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 18px 18px 0 0;
+    padding: 20px 16px 32px;
+    animation: slideUp 0.22s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(60px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .cal-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1B3A6B;
+    text-transform: capitalize;
+  }
+  .cal-nav {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1B3A6B;
+    -webkit-appearance: none;
+  }
+  .cal-nav:active { background: #eef2f8; }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+  }
+  .cal-dow {
+    font-size: 11px;
+    font-weight: 700;
+    color: #aaa;
+    padding: 4px 0;
+    text-transform: uppercase;
+  }
+  .cal-day {
+    font-size: 14px;
+    padding: 8px 2px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #222;
+    transition: background 0.1s;
+    -webkit-appearance: none;
+    background: none;
+    border: none;
+    width: 36px;
+    height: 36px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cal-day:active { background: #eef2f8; }
+  .cal-day.today {
+    border: 2px solid #1B3A6B;
+    color: #1B3A6B;
+    font-weight: 700;
+  }
+  .cal-day.selected {
+    background: #1B3A6B;
+    color: #fff;
+    font-weight: 700;
+  }
+  .cal-day.other-month { color: #ccc; }
+  .cal-day.empty { pointer-events: none; }
+  .cal-close {
+    margin-top: 16px;
+    width: 100%;
+    background: #1B3A6B;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+  .btn-cal-icon {
+    background: #1B3A6B;
+    border: none;
+    border-radius: 6px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    -webkit-appearance: none;
+  }
+  .btn-cal-icon i { font-size: 18px; color: #fff; }
+
+  /* ══════════════════════════════
+     SCREEN 4 — GALERÍA ENTREGAS
+  ══════════════════════════════ */
+  .s4-filters {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;
+    align-items: center;
+  }
+  .s4-search-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f7f8fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 7px 10px;
+  }
+  .s4-search-wrap i { font-size: 18px; color: #aaa; }
+  .s4-search-wrap input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    color: #222;
+    outline: none;
+  }
+  .s4-filter-select-wrap { position: relative; min-width: 110px; }
+  .s4-filter-select {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 8px 28px 8px 10px;
+    font-size: 12px;
+    background: #fff;
+    color: #1B3A6B;
+    font-weight: 600;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+  }
+  .s4-filter-arrow {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #1B3A6B;
+    font-size: 14px;
+  }
+  .s4-gallery {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .s4-card {
+    border: 1px solid #e0e5f0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .s4-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .s4-card-nombre {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+    flex: 1;
+    margin-right: 8px;
+  }
+  .btn-entregar {
+    background: #1B3A6B;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    -webkit-appearance: none;
+  }
+  .btn-entregar:active { background: #142d54; }
+  .s4-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .s4-meta-row {
+    display: flex;
+    gap: 6px;
+    font-size: 12px;
+  }
+  .s4-meta-label {
+    color: #888;
+    font-style: italic;
+    min-width: 80px;
+  }
+  .s4-meta-value { color: #222; font-weight: 500; }
+  .s4-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .badge-pendiente { background: #C8102E; color: #fff; }
+  .badge-entregado { background: #1B3A6B; color: #fff; }
+  .s4-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #aaa;
+    font-size: 14px;
+    font-style: italic;
+  }
+  .s4-loading {
+    text-align: center;
+    padding: 40px 20px;
+    color: #888;
+    font-size: 13px;
+  }
+
+  /* ══════════════════════════════
+     SCREEN 5 — RECIBE EPP (ENTREGA)
+  ══════════════════════════════ */
+  .s5-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .s5-section-title {
+    font-size: 17px;
+    font-style: italic;
+    font-weight: 700;
+    color: #1B3A6B;
+    margin-bottom: 12px;
+    margin-top: 4px;
+  }
+  .s5-divider {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 16px 0;
+  }
+  .s5-epp-row {
+    display: flex;
+    align-items: center;
+    border: 1px solid #1B3A6B;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    gap: 10px;
+  }
+  .s5-epp-text { flex: 1; font-size: 13px; color: #1B3A6B; font-weight: 600; }
+  .s5-epp-talla { font-size: 13px; color: #1B3A6B; font-weight: 600; min-width: 28px; text-align: right; }
+  .s5-epp-arrow {
+    width: 32px; height: 32px;
+    border: 2px solid #1B3A6B;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #1B3A6B;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .s5-field-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .s5-field-label {
+    font-size: 13px;
+    color: #1B3A6B;
+    font-style: italic;
+    font-weight: 600;
+    min-width: 50px;
+  }
+  .s5-field-input {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px 11px;
+    font-size: 13px;
+    color: #222;
+    background: #f7f8fa;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .s5-field-input:focus { border-color: #1B3A6B; }
+  .s5-field-select-wrap { flex: 1; position: relative; }
+  .s5-field-select {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 9px 30px 9px 11px;
+    font-size: 13px;
+    background: #1B3A6B;
+    color: #fff;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+  }
+  .s5-select-arrow {
+    position: absolute; right: 10px; top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; color: #fff; font-size: 14px;
+  }
+  .s5-firma-area {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fafafa;
+    position: relative;
+    margin-bottom: 8px;
+  }
+  .s5-firma-label {
+    font-size: 11px;
+    color: #aaa;
+    text-align: center;
+    padding: 6px 0 2px;
+    font-style: italic;
+  }
+  .s5-firma-canvas {
+    display: block;
+    width: 100%;
+    height: 110px;
+    cursor: crosshair;
+    touch-action: none;
+  }
+  .s5-firma-clear {
+    position: absolute;
+    top: 6px; right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #C8102E;
+    font-size: 18px;
+    -webkit-appearance: none;
+  }
+  .s5-btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .s5-btn-firma {
+    background: #1B3A6B;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 13px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+  .s5-btn-firma:active { background: #142d54; }
+  .s5-btn-secondary {
+    background: #fff;
+    color: #888;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    padding: 13px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+  .s5-btn-secondary.active-btn {
+    background: #1B3A6B;
+    color: #fff;
+    border-color: #1B3A6B;
+    font-weight: 600;
+  }
+  .s5-btn-secondary:active { background: #eef2f8; }
+  .s5-close-btn {
+    position: absolute;
+    top: 14px; right: 14px;
+    width: 32px; height: 32px;
+    border: 2px solid #C8102E;
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #C8102E;
+    font-size: 16px;
+    -webkit-appearance: none;
+  }
+
+  /* ══ POPUP FIRMA ══ */
+  .firma-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .firma-overlay.open { display: flex; }
+  .firma-popup {
+    background: #fff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 380px;
+    padding: 20px;
+    animation: slideUp 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .firma-popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .firma-popup-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1B3A6B;
+    font-style: italic;
+  }
+  .firma-popup-close {
+    background: none;
+    border: 1.5px solid #ddd;
+    border-radius: 50%;
+    width: 30px; height: 30px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #888;
+    font-size: 14px;
+    -webkit-appearance: none;
+  }
+  .firma-popup-hint {
+    font-size: 11px;
+    color: #aaa;
+    text-align: center;
+    font-style: italic;
+  }
+  .firma-popup-canvas-wrap {
+    border: 2px dashed #1B3A6B;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f7f9fc;
+    position: relative;
+  }
+  #canvasFirmaPopup {
+    display: block;
+    width: 100%;
+    height: 160px;
+    cursor: crosshair;
+    touch-action: none;
+  }
+  .firma-popup-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .firma-btn-limpiar {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 11px;
+    font-size: 13px;
+    color: #555;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+  .firma-btn-guardar {
+    background: #1B3A6B;
+    border: none;
+    border-radius: 8px;
+    padding: 11px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+  .firma-btn-guardar:active { background: #142d54; }
+  .s5-btn-firma.signed {
+    background: #2a6e3f;
+    position: relative;
+  }
+  .s5-btn-firma.signed::after {
+    content: ' ✓';
+  }
+
+  /* ══════════════════════════════
+     SCREEN 6 — ENTREGA EQUIPOS
+  ══════════════════════════════ */
+  .s6-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .s6-label {
+    font-size: 13px;
+    font-style: italic;
+    color: #1B3A6B;
+    font-weight: 600;
+    min-width: 80px;
+  }
+  .s6-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .s6-select-wrap { flex: 1; position: relative; }
+  .s6-select {
+    width: 100%;
+    border: none;
+    border-radius: 6px;
+    padding: 9px 30px 9px 11px;
+    font-size: 13px;
+    background: #1B3A6B;
+    color: #fff;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+  }
+  .s6-select option { background: #fff; color: #222; }
+  .s6-arrow {
+    position: absolute; right: 10px; top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; color: #fff; font-size: 14px;
+  }
+  .s6-input {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px 11px;
+    font-size: 13px;
+    color: #222;
+    background: #f7f8fa;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .s6-input:focus { border-color: #1B3A6B; }
+  .s6-btn-equipo {
+    flex: 1;
+    background: #1B3A6B;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    -webkit-appearance: none;
+  }
+  .s6-btn-equipo:active { background: #142d54; }
+  .s6-btn-equipo.selected { background: #2a6e3f; }
+  .s6-firmas-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .s6-btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .s6-btn-solicitudes {
+    background: #C8102E;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 11px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.3;
+    -webkit-appearance: none;
+  }
+  .s6-btn-solicitudes:active { background: #a00d24; }
+
+  /* ══ POPUP EQUIPOS ══ */
+  .equipos-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+  }
+  .equipos-overlay.open { display: flex; }
+  .equipos-popup {
+    background: #fff;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 360px;
+    overflow: hidden;
+    animation: slideUp 0.2s ease;
+  }
+  .equipos-popup-title {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #222;
+    padding: 16px 20px 10px;
+    border-bottom: 1px solid #eee;
+  }
+  .equipos-lista { display: flex; flex-direction: column; }
+  .equipo-item {
+    padding: 13px 20px;
+    font-size: 14px;
+    font-style: italic;
+    color: #222;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.1s;
+  }
+  .equipo-item:last-child { border-bottom: none; }
+  .equipo-item:active { background: #eef2f8; }
+  .equipo-item.selected {
+    background: #C8102E;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  /* ══ BUSCADOR NOMBRE S6 ══ */
+  .s6-search-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1B3A6B;
+    color: #fff;
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    user-select: none;
+    gap: 6px;
+  }
+  .s6-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0; right: 0;
+    background: #fff;
+    border: 1px solid #dde3f0;
+    border-radius: 8px;
+    z-index: 100;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    overflow: hidden;
+  }
+  .s6-dropdown-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+  }
+  .s6-dropdown-search input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 13px;
+    color: #222;
+    background: transparent;
+  }
+  .s6-dropdown-list {
+    max-height: 200px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .s6-dropdown-item {
+    padding: 11px 14px;
+    font-size: 13px;
+    font-style: italic;
+    color: #222;
+    cursor: pointer;
+    border-bottom: 1px solid #f5f5f5;
+  }
+  .s6-dropdown-item:active { background: #eef2f8; }
+  .s6-dropdown-item.selected { background: #eef2f8; font-weight: 600; color: #1B3A6B; }
+
+  /* ══ POPUP LIC P1 ══ */
+  .licp1-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 400;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 16px 12px;
+  }
+  .licp1-overlay.open { display: flex; }
+  .licp1-popup {
+    background: #fff;
+    border: 2px solid #1B3A6B;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 380px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: slideUp 0.2s ease;
+  }
+  .licp1-fotos-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .licp1-foto-box {
+    border: 1.5px solid #1B3A6B;
+    border-radius: 10px;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    background: #f7f9fc;
+  }
+  .licp1-foto-box:active { opacity: 0.8; }
+  .licp1-foto-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: #aaa;
+    font-style: italic;
+  }
+  .licp1-close-btn {
+    background: none;
+    border: 2px solid #C8102E;
+    border-radius: 50%;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .licp1-firma-wrap {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .licp1-canvas {
+    display: block;
+    width: 100%;
+    height: 200px;
+    touch-action: none;
+    cursor: crosshair;
+    background: #fff;
+  }
+  .licp1-firma-toolbar {
+    background: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 10px;
+  }
+  .lic-tool {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 17px;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    -webkit-appearance: none;
+  }
+  .lic-tool.active { background: #444; color: #fff; }
+  .lic-tool:active { background: #333; }
+  .licp1-btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .licp1-btn-enviar {
+    background: #1B3A6B;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 13px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+  .licp1-btn-cerrar {
+    background: #fff;
+    color: #555;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 13px;
+    font-size: 14px;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+  .licp1-btn-enviar:active { background: #142d54; }
+  .licp1-btn-cerrar:active  { background: #f5f5f5; }
+
+  /* ══ POPUP CONFIRMAR ══ */
+  .confirm-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .confirm-overlay.open { display: flex; }
+  .confirm-popup {
+    background: #fff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 320px;
+    padding: 28px 24px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    animation: slideUp 0.2s ease;
+    text-align: center;
+  }
+  .confirm-icon { margin-bottom: 4px; }
+  .confirm-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1B3A6B;
+  }
+  .confirm-msg {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.5;
+  }
+  .confirm-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+    margin-top: 6px;
+  }
+  .confirm-btn-cancel {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    color: #555;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+  .confirm-btn-ok {
+    background: #C8102E;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+  .confirm-btn-ok:active { background: #a00d24; }
+  .confirm-btn-cancel:active { background: #f5f5f5; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+
+  <!-- ══════════════════════════
+       SCREEN 0 — PORTAL INICIO
+  ══════════════════════════════ -->
+  <div class="screen active" id="screen0">
+    <div class="s0-logo">
+      <img src="data:image/jpeg;base64,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" alt="EFE Trenes de Chile">
+    </div>
+    <div class="s0-subtitle">Sistema de Gestión EFE Valparaíso</div>
+    <div class="s0-buttons">
+      <button class="btn-portal" onclick="goTo('screen1')">
+        <div class="btn-portal-icon"><i class="ti ti-shield-check" aria-hidden="true"></i></div>
+        <div class="btn-portal-text">
+          <span class="btn-portal-title">Solicitudes EPP</span>
+          <span class="btn-portal-desc">Solicitud, entrega e inspección</span>
+        </div>
+      </button>
+      <button class="btn-portal charlas" onclick="goTo('screen7')">
+        <div class="btn-portal-icon"><i class="ti ti-presentation" aria-hidden="true"></i></div>
+        <div class="btn-portal-text">
+          <span class="btn-portal-title">Charlas y Capacitaciones</span>
+          <span class="btn-portal-desc">Registro de asistencia y cursos</span>
+        </div>
+      </button>
+    </div>
+    <div class="s0-footer"></div>
+  </div>
+
+  <!-- ══════════════════════════
+       SCREEN 1 — HOME
+  ══════════════════════════════ -->
+  <div class="screen" id="screen1">
+    <div class="screen-header">
+      <button class="btn-back" onclick="goTo('screen0')" aria-label="Volver">←</button>
+      EPP – EFE Trenes de Chile
+    </div>
+    <div class="s1-date" id="fechaHoy"></div>
+    <div class="s1-title">Solicitud / Entrega de EPP /<br>Entrega de Equipos</div>
+    <div class="s1-buttons">
+      <button class="btn-main" onclick="goTo('screen2')">Solicitud EPP</button>
+      <button class="btn-main" onclick="goTo('screen4');loadGallery()">Entrega / Recepción EPP</button>
+      <button class="btn-main" onclick="goTo('screen6');initScreen6()">Entrega Equipos/Licencias/Otros</button>
+    </div>
+    <div class="s1-footer"></div>
+  </div>
+
+  <!-- ══════════════════════════
+       SCREEN 2 — LISTA FUNCIONARIOS
+  ══════════════════════════════ -->
+  <div class="screen" id="screen2">
+    <div class="screen-header">
+      <button class="btn-back" onclick="goTo('screen1')" aria-label="Volver">←</button>
+      Gestión Solicitudes
+    </div>
+    <div class="search-bar">
+      <i class="ti ti-search" aria-hidden="true"></i>
+      <input type="text" id="searchInput" placeholder="Buscar funcionario..." oninput="filterList()" autocomplete="off" autocorrect="off" spellcheck="false">
+    </div>
+    <div class="funcionario-list" id="funcionarioList"></div>
+    <div class="no-results" id="noResults">No se encontraron resultados</div>
+    <div class="s2-footer">
+      <button class="btn-cerrar" onclick="goTo('screen1')">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════
+       SCREEN 3 — SOLICITUD EPP
+  ══════════════════════════════ -->
+  <div class="screen" id="screen3">
+    <div class="screen-header">
+      <button class="btn-back" onclick="goTo('screen2')" aria-label="Volver">←</button>
+      Solicitud de EPP
+
+    </div>
+    <div class="s3-body">
+
+      <div class="field-row">
+        <div class="field-label">Funcionario</div>
+        <div class="field-value" id="s3Funcionario">—</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Rut</div>
+        <div class="field-value" id="s3Rut">—</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Cargo</div>
+        <div class="field-value" id="s3Cargo">—</div>
+      </div>
+
+      <div class="field-block">
+        <div class="field-label-top">Fecha Solicitud</div>
+        <div class="field-date-row">
+          <div class="field-value" id="s3Fecha" style="flex:1"></div>
+          <button class="btn-cal-icon" onclick="openCalendar()" aria-label="Abrir calendario">
+            <i class="ti ti-calendar" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Tipo Calzado</div>
+        <div class="field-select-wrap">
+          <select class="field-select" id="tipoCalzado" onchange="onCalzadoChange()">
+            <option value="NO">NO</option>
+            <option value="especial">Calzado Seg. Especial</option>
+            <option value="normal">Calzado Seg. Normal</option>
+          </select>
+          <i class="ti ti-chevron-down select-arrow" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <!-- Panel adjunto — visible solo si Calzado Especial -->
+      <div class="adjunto-panel" id="adjuntoPanel">
+        <div class="adjunto-label">Datos adjuntos</div>
+        <div class="adjunto-empty" id="adjuntoEmpty">No hay nada adjunto.</div>
+        <div class="adjunto-lista" id="adjuntoLista"></div>
+        <div class="adjunto-actions">
+          <button class="btn-adjunto" onclick="triggerFile()">
+            <i class="ti ti-upload" aria-hidden="true"></i> Subir archivo
+          </button>
+          <button class="btn-adjunto" onclick="triggerCamera()">
+            <i class="ti ti-camera" aria-hidden="true"></i> Tomar foto
+          </button>
+        </div>
+        <input type="file" id="fileInput" style="display:none" accept="image/*,application/pdf" onchange="onFileSelected(event)">
+        <input type="file" id="cameraInput" style="display:none" accept="image/*" capture="environment" onchange="onFileSelected(event)">
+        <div class="adjunto-note">
+          <i class="ti ti-paperclip" aria-hidden="true"></i>
+          <span>Debe adjuntar al menos un archivo para continuar</span>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Talla Calzado</div>
+        <div class="field-select-wrap">
+          <select class="field-select" id="tallaCalzado">
+            <option value="">-</option>
+            <option>34</option><option>35</option><option>36</option>
+            <option>37</option><option>38</option><option>39</option>
+            <option>40</option><option>41</option><option>42</option>
+            <option>43</option><option>44</option><option>45</option>
+          </select>
+          <i class="ti ti-chevron-down select-arrow" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Chaqueta Geóloga</div>
+        <div class="field-select-wrap">
+          <select class="field-select" id="chaquetaGeologa">
+            <option>NO</option><option>XS</option><option>S</option>
+            <option>M</option><option>L</option><option>XL</option><option>XXL</option><option>XXXL</option>
+          </select>
+          <i class="ti ti-chevron-down select-arrow" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Casco</div>
+        <div class="field-select-wrap">
+          <select class="field-select" id="cascoSelect">
+            <option>NO</option><option>SI</option>
+          </select>
+          <i class="ti ti-chevron-down select-arrow" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Guantes</div>
+        <div class="field-select-wrap">
+          <select class="field-select" id="guantesSelect">
+            <option>NO</option><option>SI</option>
+          </select>
+          <i class="ti ti-chevron-down select-arrow" aria-hidden="true"></i>
+        </div>
+      </div>
+
+    </div>
+    <div class="s3-footer">
+      <button class="btn-enviar" onclick="enviarSolicitud()">Enviar / Guardar<br>Solicitud</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════
+       SCREEN 4 — GALERÍA ENTREGAS
+  ══════════════════════════════ -->
+  <div class="screen" id="screen4">
+    <div class="screen-header">
+      <button class="btn-back" onclick="goTo('screen1')" aria-label="Volver">←</button>
+      Entrega / Recepción EPP
+    </div>
+    <div class="s4-filters">
+      <div class="s4-search-wrap">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <input type="text" id="s4Search" placeholder="Buscar funcionario..." oninput="filterGallery()" autocomplete="off">
+      </div>
+      <div class="s4-filter-select-wrap">
+        <select class="s4-filter-select" id="s4FilterEPP" onchange="filterGallery()">
+          <option value="">Todos EPP</option>
+          <option value="Calzado">Calzado</option>
+          <option value="Casco">Casco</option>
+          <option value="Guantes">Guantes</option>
+          <option value="Chaqueta">Chaqueta</option>
+        </select>
+        <i class="ti ti-chevron-down s4-filter-arrow" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="s4-gallery" id="s4Gallery">
+      <div class="s4-loading"><i class="ti ti-loader" aria-hidden="true"></i> Cargando solicitudes...</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════
+       SCREEN 5 — RECIBE EPP
+  ══════════════════════════════ -->
+  <div class="screen" id="screen5">
+    <div class="screen-header" style="position:relative;">
+      <button class="btn-back" onclick="goTo('screen4');loadGallery()" aria-label="Volver">←</button>
+      Recibe EPP
+    </div>
+    <div class="s5-body" id="s5Body">
+
+      <div class="s5-section-title">Recibe EPP</div>
+
+      <div class="field-block" style="margin-bottom:12px">
+        <div class="field-label-top">Fecha Entrega</div>
+        <div class="field-date-row">
+          <div class="field-value" id="s5Fecha" style="flex:1"></div>
+          <button class="btn-cal-icon" onclick="openCalendarEntrega()" aria-label="Abrir calendario">
+            <i class="ti ti-calendar" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="field-row" style="margin-bottom:10px">
+        <div class="field-label">Nombre</div>
+        <div class="field-value" id="s5Nombre">—</div>
+      </div>
+      <div class="field-row" style="margin-bottom:10px">
+        <div class="field-label">Rut</div>
+        <div class="field-value" id="s5Rut">—</div>
+      </div>
+      <div class="field-row" style="margin-bottom:10px">
+        <div class="field-label">Cargo</div>
+        <div class="field-value" id="s5Cargo">—</div>
+      </div>
+
+      <div id="s5EppList" style="margin-top:6px;margin-bottom:4px"></div>
+
+      <hr class="s5-divider">
+
+      <div class="s5-section-title" style="margin-bottom:10px">Entrega EPP</div>
+
+      <!-- IL: dropdown con inspectores de línea -->
+      <div class="s5-field-row">
+        <div class="s5-field-label">IL</div>
+        <div class="s5-field-select-wrap">
+          <select class="s5-field-select" id="s5IL" onchange="onILChange()">
+            <option value="">Seleccionar...</option>
+          </select>
+          <i class="ti ti-chevron-down s5-select-arrow" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <!-- RUT auto-completado -->
+      <div class="s5-field-row">
+        <div class="s5-field-label">Rut</div>
+        <div class="field-value" id="s5RutEntrega" style="flex:1;background:#f7f8fa">—</div>
+      </div>
+
+      <!-- Botones de firma -->
+      <div class="s5-btn-row" style="margin-top:8px;margin-bottom:16px">
+        <button class="s5-btn-firma" id="btnFirmaEntrega" onclick="abrirFirmaPopup('entrega')">
+          <i class="ti ti-pencil" style="margin-right:5px"></i>Firma Entrega
+        </button>
+        <button class="s5-btn-firma" id="btnFirmaRecibe" onclick="abrirFirmaPopup('recibe')">
+          <i class="ti ti-pencil" style="margin-right:5px"></i>Firma Recibe
+        </button>
+      </div>
+
+      <!-- Previews de firma -->
+      <div id="previewEntrega" style="display:none;margin-bottom:10px">
+        <div style="font-size:11px;color:#888;margin-bottom:4px;font-style:italic">Vista previa — Firma Entrega</div>
+        <div style="border:1px solid #ddd;border-radius:8px;overflow:hidden;position:relative;">
+          <img id="imgFirmaEntrega" style="width:100%;height:80px;object-fit:contain;background:#fafafa;">
+          <button onclick="borrarFirma('entrega')" style="position:absolute;top:4px;right:6px;background:none;border:none;cursor:pointer;color:#C8102E;font-size:16px;"><i class="ti ti-x"></i></button>
+        </div>
+      </div>
+      <div id="previewRecibe" style="display:none;margin-bottom:16px">
+        <div style="font-size:11px;color:#888;margin-bottom:4px;font-style:italic">Vista previa — Firma Recibe</div>
+        <div style="border:1px solid #ddd;border-radius:8px;overflow:hidden;position:relative;">
+          <img id="imgFirmaRecibe" style="width:100%;height:80px;object-fit:contain;background:#fafafa;">
+          <button onclick="borrarFirma('recibe')" style="position:absolute;top:4px;right:6px;background:none;border:none;cursor:pointer;color:#C8102E;font-size:16px;"><i class="ti ti-x"></i></button>
+        </div>
+      </div>
+
+      <div class="s5-btn-row">
+        <button class="s5-btn-firma" onclick="guardarEntrega()">Guardar</button>
+        <button class="s5-btn-secondary" id="btnEnviarDoc" onclick="enviarDocumento()">Enviar Documento</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════
+       SCREEN 6 — ENTREGA EQUIPOS
+  ══════════════════════════════ -->
+  <div class="screen" id="screen6">
+    <div class="screen-header">
+      <button class="btn-back" onclick="goTo('screen1')" aria-label="Volver">←</button>
+      Entrega Equipo-Correo
+    </div>
+    <div class="s6-body">
+
+      <!-- Fecha -->
+      <div class="field-block" style="margin-bottom:12px">
+        <div class="s6-label">Fecha</div>
+        <div class="field-date-row">
+          <div class="field-value" id="s6Fecha" style="flex:1"></div>
+          <button class="btn-cal-icon" onclick="openCalendarS6()" aria-label="Abrir calendario">
+            <i class="ti ti-calendar" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Nombre — todos los funcionarios con buscador -->
+      <div class="s6-row">
+        <div class="s6-label">Nombre</div>
+        <div style="flex:1;position:relative;">
+          <div class="s6-search-box" id="s6SearchBox" onclick="toggleS6Dropdown()">
+            <span id="s6NombreDisplay">Seleccionar...</span>
+            <i class="ti ti-chevron-down" style="font-size:13px;color:#fff;flex-shrink:0"></i>
+          </div>
+          <div class="s6-dropdown" id="s6Dropdown" style="display:none">
+            <div class="s6-dropdown-search">
+              <i class="ti ti-search" style="color:#aaa;font-size:16px;flex-shrink:0"></i>
+              <input type="text" id="s6SearchInput" placeholder="Buscar funcionario..." oninput="filterS6Funcionarios()" autocomplete="off" autocorrect="off">
+            </div>
+            <div class="s6-dropdown-list" id="s6DropdownList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rut -->
+      <div class="s6-row">
+        <div class="s6-label">Rut</div>
+        <div class="field-value" id="s6Rut" style="flex:1;background:#f7f8fa">—</div>
+      </div>
+
+      <!-- Cargo -->
+      <div class="s6-row">
+        <div class="s6-label">Cargo</div>
+        <div class="field-value" id="s6Cargo" style="flex:1;background:#f7f8fa">—</div>
+      </div>
+
+      <!-- Equipo a Entregar -->
+      <div class="s6-row">
+        <div class="s6-label">Seleccione</div>
+        <button class="s6-btn-equipo" id="s6BtnEquipo" onclick="abrirEquiposPopup()">
+          <span id="s6EquipoLabel">Equipo a Entregar</span>
+          <i class="ti ti-chevron-down" style="margin-left:8px;font-size:14px"></i>
+        </button>
+      </div>
+
+      <!-- Entrega — solo Inspectores -->
+      <div class="s6-row">
+        <div class="s6-label">Entrega</div>
+        <div class="s6-select-wrap">
+          <select class="s6-select" id="s6Entrega" onchange="onS6EntregaChange()">
+            <option value="">Seleccionar...</option>
+          </select>
+          <i class="ti ti-chevron-down s6-arrow" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <!-- Firmas -->
+      <div class="s6-firmas-row">
+        <button class="s5-btn-firma" id="s6BtnFirmaEntrega" onclick="abrirFirmaPopupS6('entrega')">
+          <i class="ti ti-pencil" style="margin-right:5px"></i>Firma Entrega
+        </button>
+        <button class="s5-btn-firma" id="s6BtnFirmaRecibe" onclick="abrirFirmaPopupS6('recibe')">
+          <i class="ti ti-pencil" style="margin-right:5px"></i>Firma Recibe
+        </button>
+      </div>
+
+      <!-- Previews firma -->
+      <div id="s6PreviewEntrega" style="display:none;margin-bottom:8px">
+        <div style="font-size:11px;color:#888;margin-bottom:3px;font-style:italic">Vista previa — Firma Entrega</div>
+        <div style="border:1px solid #ddd;border-radius:8px;overflow:hidden;position:relative;">
+          <img id="s6ImgFirmaEntrega" style="width:100%;height:70px;object-fit:contain;background:#fafafa;">
+          <button onclick="borrarFirmaS6('entrega')" style="position:absolute;top:4px;right:6px;background:none;border:none;cursor:pointer;color:#C8102E;font-size:16px;"><i class="ti ti-x"></i></button>
+        </div>
+      </div>
+      <div id="s6PreviewRecibe" style="display:none;margin-bottom:12px">
+        <div style="font-size:11px;color:#888;margin-bottom:3px;font-style:italic">Vista previa — Firma Recibe</div>
+        <div style="border:1px solid #ddd;border-radius:8px;overflow:hidden;position:relative;">
+          <img id="s6ImgFirmaRecibe" style="width:100%;height:70px;object-fit:contain;background:#fafafa;">
+          <button onclick="borrarFirmaS6('recibe')" style="position:absolute;top:4px;right:6px;background:none;border:none;cursor:pointer;color:#C8102E;font-size:16px;"><i class="ti ti-x"></i></button>
+        </div>
+      </div>
+
+      <!-- Botones finales -->
+      <div class="s6-btn-row">
+        <button class="s5-btn-firma" id="s6BtnGuardar" onclick="guardarEquipo()">Guardar / Enviar PDF</button>
+        <button class="s6-btn-solicitudes" onclick="goTo('screen1')">Solicitudes<br>Equipos</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════
+       SCREEN 7 — CHARLAS Y CAPACITACIONES
+  ══════════════════════════════ -->
+  <div class="screen" id="screen7">
+    <div class="screen-header">
+      <button class="btn-back" onclick="goTo('screen0')" aria-label="Volver">←</button>
+      Charlas y Capacitaciones
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 36px;gap:20px;">
+      <i class="ti ti-tools" style="font-size:56px;color:#ddd;"></i>
+      <div style="text-align:center;font-size:16px;font-weight:600;color:#1B3A6B;">Módulo en desarrollo</div>
+      <div style="text-align:center;font-size:13px;color:#888;line-height:1.6;">Este módulo estará disponible próximamente.<br>Aquí podrás registrar asistencia a charlas y capacitaciones.</div>
+      <button class="btn-main" style="margin-top:12px;" onclick="goTo('screen0')">← Volver al inicio</button>
+    </div>
+    <div class="s1-footer"></div>
+  </div>
+
+</div>
+
+<!-- ══ POPUP FIRMA ══ -->
+<!-- ══ POPUP CONFIRMAR ELIMINAR ══ -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-popup">
+    <div class="confirm-icon"><i class="ti ti-alert-triangle" style="font-size:32px;color:#C8102E"></i></div>
+    <div class="confirm-title">Eliminar Solicitud</div>
+    <div class="confirm-msg">¿Estás seguro que deseas eliminar esta solicitud? Esta acción no se puede deshacer.</div>
+    <div class="confirm-btns">
+      <button class="confirm-btn-cancel" onclick="cerrarConfirm()">Cancelar</button>
+      <button class="confirm-btn-ok" id="confirmOkBtn">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="firma-overlay" id="firmaOverlay">
+  <div class="firma-popup">
+    <div class="firma-popup-header">
+      <span class="firma-popup-title" id="firmaPopupTitle">Firma</span>
+      <button class="firma-popup-close" onclick="cerrarFirmaPopup()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="firma-popup-hint">Firme dentro del área</div>
+    <div class="firma-popup-canvas-wrap">
+      <canvas id="canvasFirmaPopup"></canvas>
+    </div>
+    <div class="firma-popup-actions">
+      <button class="firma-btn-limpiar" onclick="limpiarFirmaPopup()"><i class="ti ti-eraser" style="margin-right:5px"></i>Limpiar</button>
+      <button class="firma-btn-guardar" onclick="guardarFirmaPopup()"><i class="ti ti-check" style="margin-right:5px"></i>Guardar Firma</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ POPUP EQUIPOS ══ -->
+<div class="equipos-overlay" id="equiposOverlay" onclick="equiposOverlayClick(event)">
+  <div class="equipos-popup">
+    <div class="equipos-popup-title">Seleccione Elemento</div>
+    <div class="equipos-lista" id="equiposLista"></div>
+  </div>
+</div>
+
+<!-- ══ POPUP LIC P1 ══ -->
+<div class="licp1-overlay" id="licp1Overlay">
+  <div class="licp1-popup">
+
+    <!-- Fotos -->
+    <div class="licp1-fotos-row">
+      <div class="licp1-foto-box" id="licp1FotoBox1" onclick="triggerFotoLic(1)">
+        <input type="file" id="licp1File1" accept="image/*" capture="environment" style="display:none" onchange="onLicFotoSelected(event,1)">
+        <img id="licp1Img1" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:8px;">
+        <div class="licp1-foto-placeholder" id="licp1Ph1">
+          <i class="ti ti-photo" style="font-size:28px;color:#aaa"></i>
+          <span>Tomar Foto 1</span>
+        </div>
+      </div>
+      <div class="licp1-foto-box" id="licp1FotoBox2" onclick="triggerFotoLic(2)">
+        <input type="file" id="licp1File2" accept="image/*" capture="environment" style="display:none" onchange="onLicFotoSelected(event,2)">
+        <img id="licp1Img2" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:8px;">
+        <div class="licp1-foto-placeholder" id="licp1Ph2">
+          <i class="ti ti-photo" style="font-size:28px;color:#aaa"></i>
+          <span>Tomar Foto 2</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón cerrar -->
+    <div style="display:flex;justify-content:center;margin:6px 0">
+      <button class="licp1-close-btn" onclick="cerrarLicP1()">
+        <i class="ti ti-x" style="font-size:16px;color:#C8102E"></i>
+      </button>
+    </div>
+
+    <!-- Canvas firma -->
+    <div class="licp1-firma-wrap">
+      <canvas id="canvasLicP1" class="licp1-canvas"></canvas>
+      <div class="licp1-firma-toolbar">
+        <button onclick="setLicTool('pen')"   id="licToolPen"    class="lic-tool active" title="Lapiz"><i class="ti ti-pencil"></i></button>
+        <button onclick="setLicTool('erase')" id="licToolErase"  class="lic-tool" title="Borrador"><i class="ti ti-eraser"></i></button>
+        <button onclick="clearLicCanvas()"    class="lic-tool" title="Limpiar todo"><i class="ti ti-x"></i></button>
+        <div style="width:1px;background:#555;height:18px;margin:0 4px"></div>
+        <button onclick="setLicTool('line')"  id="licToolLine"   class="lic-tool" title="Linea"><i class="ti ti-minus"></i></button>
+        <button onclick="setLicTool('text')"  id="licToolText"   class="lic-tool" title="Texto"><i class="ti ti-letter-case"></i></button>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="licp1-btn-row">
+      <button class="licp1-btn-enviar" onclick="guardarLicP1()">Enviar</button>
+      <button class="licp1-btn-cerrar" onclick="cerrarLicP1()">Cerrar</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Calendario -->
+<div class="cal-overlay" id="calOverlay" onclick="overlayClick(event)">
+  <div class="cal-box" id="calBox">
+    <div class="cal-header">
+      <button class="cal-nav" onclick="calMove(-1)">&#8249;</button>
+      <div class="cal-title" id="calTitle"></div>
+      <button class="cal-nav" onclick="calMove(1)">&#8250;</button>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <button class="cal-close" onclick="closeCalendar()">Cerrar</button>
+  </div>
+</div>
+
+<script>
+  /* ── DATOS ── */
+    const funcionarios = [
+    {nombre:"Abarca Gonzalez Francisco Javier",rut:"18.510.970-4",cargo:"Maquinista Full",email:"francisco.abarca@efevalparaiso.cl"},
+    {nombre:"Agurto Fernandez Miguel Alberto",rut:"15.826.260-6",cargo:"Partime",email:"miguel.agurto@efevalparaiso.cl"},
+    {nombre:"Andrewartha Cepeda Darcy Alexander",rut:"15.734.418-8",cargo:"Partime",email:"darcy.andrewartha@efevalparaiso.cl"},
+    {nombre:"Antunez Castro Luciano Francisco",rut:"10.471.696-2",cargo:"Maquinista Full",email:"luciano.antunez@efevalparaiso.cl"},
+    {nombre:"Arancibia Arancibia Fernando Marcelo",rut:"16.523.277-1",cargo:"Maquinista Full",email:"fernando.arancibia@efevalparaiso.cl"},
+    {nombre:"Aranda Silva Fabian Alejandro",rut:"19.251.934-9",cargo:"Maquinista Full",email:"fabian.aranda@efevalparaiso.cl"},
+    {nombre:"Aravena Flores Luis Alfredo",rut:"16.972.095-9",cargo:"Maquinista Full",email:"luis.aravena@efevalparaiso.cl"},
+    {nombre:"Araya Barrera Rodrigo",rut:"18.317.910-1",cargo:"Partime",email:"rodrigo.araya@efevalparaiso.cl"},
+    {nombre:"Araya Chacana Luis Eduardo",rut:"17.145.248-1",cargo:"Partime",email:"luis.araya@efevalparaiso.cl"},
+    {nombre:"Bahamondes Carrera Mauricio Antonio",rut:"18.299.031-0",cargo:"Maquinista Full",email:"mauricio.bahamondes@efevalparaiso.cl"},
+    {nombre:"Barrera Zamora Francisco Andres",rut:"17.808.533-6",cargo:"Maquinista Full",email:"francisco.barrera@efevalparaiso.cl"},
+    {nombre:"Basay Lopez Valentina Paz De Los Angeles",rut:"20.092.108-9",cargo:"Postulante",email:"vbasaylopez@gmail.com"},
+    {nombre:"Basualto Tapia Jorge Andrés",rut:"17.472.519-5",cargo:"Partime",email:"jorge.basualto@efevalparaiso.cl"},
+    {nombre:"Bavestrello Martinez Camilo Ignacio",rut:"18.658.713-8",cargo:"Maquinista Full",email:"camilo.martinez@efevalparaiso.cl"},
+    {nombre:"Becerra Bustos Juan Elias",rut:"16.890.580-7",cargo:"Maquinista Full",email:"juan.becerra@efevalparaiso.cl"},
+    {nombre:"Beiza Flores Pedro Edgardo",rut:"10.472.345-4",cargo:"Maquinista Full",email:"pedro.beiza@efevalparaiso.cl"},
+    {nombre:"Berrocal Vargas Carlos Alberto",rut:"09.193.770-0",cargo:"Maquinista Full",email:"carlos.berrocal@efevalparaiso.cl"},
+    {nombre:"Borras Muñoz Haylen Diljhama",rut:"26.037.047-2",cargo:"Partime",email:"haylen.borras@efevalparaiso.cl"},
+    {nombre:"Bruna Muñoz Lennart Chris",rut:"20.657.444-5",cargo:"Postulante",email:"lennartbm1@gmail.com"},
+    {nombre:"Burgos Leuquen Jimmie Paul",rut:"17.238.310-6",cargo:"Maquinista Full",email:"jimmie.burgos@efevalparaiso.cl"},
+    {nombre:"Cabrera Donoso Sandro",rut:"11.387.393-0",cargo:"Inspector de linea",email:"sandro.cabrera@efevalparaiso.cl"},
+    {nombre:"Cabrera Lazcano Sergio Antonio",rut:"17.274.178-9",cargo:"Maquinista Full",email:"sergio.cabrera@efevalparaiso.cl"},
+    {nombre:"Campos Osses Johao Aliro",rut:"19.773.548-8",cargo:"Partime",email:"johao.campos@efevalparaiso.cl"},
+    {nombre:"Candia Pizarro Manuel",rut:"10.007.531-8",cargo:"Inspector de linea",email:"manuel.candia@efevalparaiso.cl"},
+    {nombre:"Carpio Diaz Jose Luis",rut:"17.115.760-9",cargo:"Maquinista Full",email:"jose.carpio@efevalparaiso.cl"},
+    {nombre:"Carrasco Lazcano Miguel Angel",rut:"16.550.121-7",cargo:"Maquinista Full",email:"miguel.carrasco@efevalparaiso.cl"},
+    {nombre:"Carrasco Lazcano Victor Manuel",rut:"15.061.175-K",cargo:"Maquinista Full",email:"victor.carrasco@efevalparaiso.cl"},
+    {nombre:"Castillo Cáceres Francisca Vanessa",rut:"20.521.859-9",cargo:"Partime",email:"francisca.castillo@efevalparaiso.cl"},
+    {nombre:"Castillo Ruiz Cristofer Claudio",rut:"17.964.678-1",cargo:"Maquinista Full",email:"cristofer.castillo@efevalparaiso.cl"},
+    {nombre:"Castro Mora Luis Alberto",rut:"16.989.939-8",cargo:"Maquinista Full",email:"luis.castro@efevalparaiso.cl"},
+    {nombre:"Catalan Henriquez Paula Alejandra Francisca",rut:"17.773.619-K",cargo:"Partime",email:"paula.catalan@efevalparaiso.cl"},
+    {nombre:"Catalan Yeuto Juan Antonio",rut:"18.916.026-7",cargo:"Maquinista Full",email:"juan.catalan@efevalparaiso.cl"},
+    {nombre:"Delgado Aros Felipe Andres",rut:"07.839.458-7",cargo:"Maquinista Full",email:"felipe.delgado@efevalparaiso.cl"},
+    {nombre:"Dinamarca Cubillos Carlos Manuel",rut:"16.523.499-5",cargo:"Maquinista Full",email:"carlos.dinamarca@efevalparaiso.cl"},
+    {nombre:"Dinamarca Cubillos Eduardo Antonio",rut:"18.817.715-8",cargo:"Maquinista Full",email:"eduardo.dinamarca@efevalparaiso.cl"},
+    {nombre:"Donoso Johnson Cristobal Pedro",rut:"17.118.344-8",cargo:"Partime",email:"cristobal.donoso@efevalparaiso.cl"},
+    {nombre:"Donoso Maya Jonatan Davis",rut:"18.659.658-7",cargo:"Partime",email:"jonatan.donoso@efevalparaiso.cl"},
+    {nombre:"Embry Coñuecar Jercob Eduardo",rut:"17.203.436-5",cargo:"Maquinista Full",email:"jembry@efevalparaiso.cl"},
+    {nombre:"Erices Castillo Claudio Alejandro",rut:"12.096.488-7",cargo:"Maquinista Full",email:"claudio.erices@efevalparaiso.cl"},
+    {nombre:"Escobar Maturana Juan Carlos",rut:"16.621.846-2",cargo:"Maquinista Full",email:"juan.escobar@efevalparaiso.cl"},
+    {nombre:"Fabres Ojeda Jean Paul",rut:"16.573.812-8",cargo:"Maquinista Full",email:"jean.fabres@efevalparaiso.cl"},
+    {nombre:"Fernandez Garay Cristian Yanko",rut:"08.219.138-0",cargo:"Maquinista Full",email:"cristian.fernandez@efevalparaiso.cl"},
+    {nombre:"Fernandez Torres Maria Jose",rut:"18.998.781-1",cargo:"Partime",email:"mariajose.fernandez@efevalparaiso.cl"},
+    {nombre:"Figueroa Jara Francisca Paz",rut:"19.152.733-K",cargo:"Partime",email:"francisca.figueroa@efevalparaiso.cl"},
+    {nombre:"Frias Herrera Rodrigo Adolfo",rut:"17.143.472-6",cargo:"Inspector de linea",email:"mvrfh@efevalparaiso.cl"},
+    {nombre:"Fuentealba Rivera Gino Alexis",rut:"15.557.522-0",cargo:"Maquinista Full",email:"gino.fuentealba@efevalparaiso.cl"},
+    {nombre:"Galarce Delgado Franco Alexandro",rut:"20.691.344-4",cargo:"Postulante",email:"franco19.galarce@gmail.com"},
+    {nombre:"Galleguillos Diaz Misael Alan",rut:"18.299.433-2",cargo:"Maquinista Full",email:"misael.galleguillos@efevalparaiso.cl"},
+    {nombre:"Gallardo Bravo Sebastian Andrés",rut:"20.940.095-2",cargo:"Partime",email:"sebastian.gallardo@efevalparaiso.cl"},
+    {nombre:"Gamboa Barahona Felipe Ignacio",rut:"18.382.500-3",cargo:"Maquinista Full",email:"felipe.gamboa@efevalparaiso.cl"},
+    {nombre:"Gonzalez Damian Camilo",rut:"16.813.518-1",cargo:"Inspector de linea",email:"camilo.gonzalez@efevalparaiso.cl"},
+    {nombre:"Gonzalez Gonzalez Agustin Andres",rut:"15.762.958-1",cargo:"Maquinista Full",email:"agustin.gonzalez@efevalparaiso.cl"},
+    {nombre:"Gonzalez Gonzalez Andrea Alejandra",rut:"17.847.296-8",cargo:"Partime",email:"andrea.gonzalez@efevalparaiso.cl"},
+    {nombre:"Gonzalez Valdes Ruben Moises",rut:"18.659.248-4",cargo:"Maquinista Full",email:"ruben.gonzalez@efevalparaiso.cl"},
+    {nombre:"Gonzalez Valencia Rodrigo Antonio",rut:"12.603.743-0",cargo:"Maquinista Full",email:"rodrigo.gonzalez@efevalparaiso.cl"},
+    {nombre:"Gonzalez Veas Fernando Nicolas",rut:"19.471.337-1",cargo:"Postulante",email:"fernandonicolasgz@gmail.com"},
+    {nombre:"Gonzalez Vera Jonatan",rut:"20.440.512-3",cargo:"Postulante",email:"jonatan.gonzalez@sansano.usm.cl"},
+    {nombre:"Guerrero Duarte Daniela Alejandra",rut:"16.485.052-9",cargo:"Partime",email:"daniela.guerrero@efevalparaiso.cl"},
+    {nombre:"Guerrero Giaier Fabian Andres",rut:"18.519.172-9",cargo:"Partime",email:"fabian.guerrero@efevalparaiso.cl"},
+    {nombre:"Gutierrez Marin Gabriel Alejandro",rut:"13.228.296-K",cargo:"Maquinista Full",email:"gabriel.gutierrez@efevalparaiso.cl"},
+    {nombre:"Herrera Flores Karin Jeleene",rut:"16.916.961-6",cargo:"Partime",email:"karin.herrera@efevalparaiso.cl"},
+    {nombre:"Hidalgo Navia Sebastian Andres",rut:"14.524.008-5",cargo:"Partime",email:"Shidalgon@metrovalparaiso.cl"},
+    {nombre:"Hofflinger Bartsch Guillermo Franz",rut:"17.754.545-7",cargo:"Inspector de linea",email:"guillermo.hofflinger@efevalparaiso.cl"},
+    {nombre:"Honores Manque Francisco Andres",rut:"16.889.560-7",cargo:"Maquinista Full",email:"francisco.honores@efevalparaiso.cl"},
+    {nombre:"Ibañez Sotomayor Rodrigo",rut:"",cargo:"Jefe de Maquinistas",email:"rodrigo.ibanez@efevalparaiso.cl"},
+    {nombre:"Inostroza Aravena Abel Aladino",rut:"10.355.520-5",cargo:"Maquinista Full",email:"abel.inostroza@efevalparaiso.cl"},
+    {nombre:"Jelvez Zamora Florencio Segundo",rut:"07.094.899-0",cargo:"Maquinista Full",email:"florencio.jelvez@efevalparaiso.cl"},
+    {nombre:"Jorge Moises Paredes Cisterna",rut:"12.825.222-3",cargo:"Inspector de linea",email:"jorge.paredesc@efevalparaiso.cl"},
+    {nombre:"Juan Vicencio Marin",rut:"17.163.542-K",cargo:"Postulante",email:"vicencio.elect@gmail.com"},
+    {nombre:"Lazo Pescoe Ignacio Andres",rut:"16.575.248-1",cargo:"Maquinista Full",email:"ignacio.lazo@efevalparaiso.cl"},
+    {nombre:"Leiva Ortega Oriel Valentin",rut:"16.754.201-8",cargo:"Maquinista Full",email:"oriel.leiva@efevalparaiso.cl"},
+    {nombre:"Levenier Gonzalez Karine",rut:"17.404.523-2",cargo:"Partime",email:"karine.levenier@efevalparaiso.cl"},
+    {nombre:"Lopez Delfin Andres Ignacio",rut:"16.887.397-2",cargo:"Partime",email:"andres.lopez@efevalparaiso.cl"},
+    {nombre:"Lopez Hermosilla Boris Ricardo Andres",rut:"18.167.426-1",cargo:"Maquinista Full",email:"boris.lopez@efevalparaiso.cl"},
+    {nombre:"Lucero Fernandez Marcos Andres",rut:"17.977.005-9",cargo:"Maquinista Full",email:"marcos.lucero@efevalparaiso.cl"},
+    {nombre:"Lucero Jara Cristopher Alejandro",rut:"18.271.431-3",cargo:"Partime",email:"cristopher.lucero@efevalparaiso.cl"},
+    {nombre:"Maldonado Silva Cristian",rut:"16.331.620-K",cargo:"Partime",email:"cristian.maldonado@efevalparaiso.cl"},
+    {nombre:"Martinez Gajardo Pablo Ignacio",rut:"17.904.417-K",cargo:"Maquinista Full",email:"pablo.gajardo@efevalparaiso.cl"},
+    {nombre:"Martinez Martinez Pablo",rut:"16.688.600-7",cargo:"Inspector de linea",email:"pablo.martinez@efevalparaiso.cl"},
+    {nombre:"Martinez Velasquez Hugo Andres",rut:"16.151.783-6",cargo:"Partime",email:"hugo.velasquez@efevalparaiso.cl"},
+    {nombre:"Maturana Yanez Jesus Ignacio",rut:"17.558.759-1",cargo:"Maquinista Full",email:"jesus.maturana@efevalparaiso.cl"},
+    {nombre:"Molina Mena Luis Dimas",rut:"08.011.323-4",cargo:"Maquinista Full",email:"luis.molina@efevalparaiso.cl"},
+    {nombre:"Morales Ojeda Alvaro Hernan",rut:"15.079.582-6",cargo:"Maquinista Full",email:""},
+    {nombre:"Morales Palomino Andres David",rut:"13.651.810-0",cargo:"Maquinista Full",email:"andres.morales@efevalparaiso.cl"},
+    {nombre:"Morales Puschel Jean Patrick",rut:"18.618.521-8",cargo:"Partime",email:"jean.morales@efevalparaiso.cl"},
+    {nombre:"Moreno Poo Diego",rut:"17.831.207-3",cargo:"Inspector de linea",email:"diego.moreno@efevalparaiso.cl"},
+    {nombre:"Mujica Moreno Armando Javier",rut:"19.151.996-5",cargo:"Maquinista Full",email:"armando.mujica@efevalparaiso.cl"},
+    {nombre:"Navarrete Valasquez Esteban Mauricio",rut:"16.967.831-6",cargo:"Inspector de linea",email:"esteban.navarrete@efevalparaiso.cl"},
+    {nombre:"Navarro Alvear Jaime Ignacio",rut:"20.655.945-4",cargo:"Partime",email:"jaime.navarro@efevalparaiso.cl"},
+    {nombre:"Navarro Estay Miguel Alejandro",rut:"18.583.709-2",cargo:"Maquinista Full",email:"miguel.navarro@efevalparaiso.cl"},
+    {nombre:"Neira Valenzuela Jorge Ivan",rut:"09.555.754-6",cargo:"Maquinista Full",email:"jorge.neira@efevalparaiso.cl"},
+    {nombre:"Nuñez Rios Nynoska",rut:"16.961.518-7",cargo:"Partime",email:"nynoska.nunez@efevalparaiso.cl"},
+    {nombre:"Ogalde Cardenas Mauricio",rut:"12.853.605-1",cargo:"Inspector de linea",email:"gonzalo.ogalde@efevalparaiso.cl"},
+    {nombre:"Olguin Lopez Cesar Camilo",rut:"17.140.395-2",cargo:"Maquinista Full",email:"cesar.olguin@efevalparaiso.cl"},
+    {nombre:"Olivares Gallardo Victor Andres",rut:"16.539.551-4",cargo:"Maquinista Full",email:"victor.olivares@efevalparaiso.cl"},
+    {nombre:"Olivares Olivares Jonathan Esteban",rut:"17.634.690-6",cargo:"Maquinista Full",email:"jonathan.olivares@efevalparaiso.cl"},
+    {nombre:"Opazo Martinez Marcelo Alejandro",rut:"17.120.196-9",cargo:"Maquinista Full",email:"marcelo.opazo@efevalparaiso.cl"},
+    {nombre:"Orellana Marcelo Bergasa",rut:"10.356.926-5",cargo:"Maquinista Full",email:"marcelo.orellana@efevalparaiso.cl"},
+    {nombre:"Ortega Cerna Josue Elias",rut:"18.618.413-0",cargo:"Partime",email:"josue.ortega@efevalparaiso.cl"},
+    {nombre:"Paez Urbina Nicolas Gustavo",rut:"12.601.383-3",cargo:"Partime",email:"nicolas.paez@efevalparaiso.cl"},
+    {nombre:"Paez Vargas Cristian Ignacio",rut:"17.119.265-K",cargo:"Maquinista Full",email:"cristian.paez@efevalparaiso.cl"},
+    {nombre:"Pasten Pérez Juan Pablo",rut:"10.300.852-2",cargo:"Partime",email:"juan.pasten@efevalparaiso.cl"},
+    {nombre:"Perez Vargas Emilia",rut:"20.785.568-5",cargo:"Partime",email:"emilia.perez@efevalparaiso.cl"},
+    {nombre:"Plaza Pivet Cristopher Jeysson",rut:"17.857.290-3",cargo:"Partime",email:"cristopher.plaza@efevalparaiso.cl"},
+    {nombre:"Poblete Hidalgo Jean",rut:"19.914.125-2",cargo:"Partime",email:"jean.poblete@efevalparaiso.cl"},
+    {nombre:"Rabutia Aranibar Rodrigo Carlos",rut:"15.980.209-4",cargo:"Maquinista Full",email:"rodrigo.rabutia@efevalparaiso.cl"},
+    {nombre:"Riquelme Pizarro Francisco Hector",rut:"18.842.977-7",cargo:"Maquinista Full",email:"francisco.riquelme@efevalparaiso.cl"},
+    {nombre:"Riquieros Muñoz John Andres",rut:"17.355.548-2",cargo:"Partime",email:"john.riquieros@efevalparaiso.cl"},
+    {nombre:"Rodriguez Urrutia Sergio Antonio",rut:"10.045.130-1",cargo:"Maquinista Full",email:"sergio.rodriguez@efevalparaiso.cl"},
+    {nombre:"Rodolfo Leiva Mendoza",rut:"21.060.737-4",cargo:"Postulante",email:"rodolfo.leiva.mendoza@gmail.com"},
+    {nombre:"Rojas Diaz Dario Ignacio",rut:"19.941.153-5",cargo:"Partime",email:"dario.rojas@efevalparaiso.cl"},
+    {nombre:"Rojas Rojas Ignacio Leonardo",rut:"18.703.215-6",cargo:"Maquinista Full",email:"ignacio.rojas@efevalparaiso.cl"},
+    {nombre:"Rumino Caballero Francisco Javier",rut:"16.232.701-1",cargo:"Maquinista Full",email:"francisco.rumino@efevalparaiso.cl"},
+    {nombre:"Saavedra Campos Sergio",rut:"15.085.244-7",cargo:"Inspector de linea",email:"sergio.saavedra@efevalparaiso.cl"},
+    {nombre:"Salazar Lazaro Hernán Miguel",rut:"9.446.608-3",cargo:"Partime",email:"hernan.salazar@efevalparaiso.cl"},
+    {nombre:"Sanchez Rivero Sergio",rut:"18.999.353-6",cargo:"Postulante",email:"sanchezuch@gmail.com"},
+    {nombre:"Sepulveda Ema del Rosario",rut:"9.783.494-6",cargo:"Partime",email:"ema.sepulveda@efevalparaiso.cl"},
+    {nombre:"Silva Mora Claudio Patricio",rut:"16.857.347-2",cargo:"Maquinista Full",email:"claudio.silva@efevalparaiso.cl"},
+    {nombre:"Silva Plaza Francisco Alejandro",rut:"17.634.998-0",cargo:"Maquinista Full",email:"francisco.silva@efevalparaiso.cl"},
+    {nombre:"Toro Cortes Alexander Marcelino",rut:"18.845.126-8",cargo:"Partime",email:"alexander.toro@efevalparaiso.cl"},
+    {nombre:"Tovar Gomez Oriana del Carmen",rut:"26.467.248-1",cargo:"Partime",email:"oriana.carmen@efevalparaiso.cl"},
+    {nombre:"Urquiaga Aguirre Jean Denis",rut:"11.389.191-2",cargo:"Maquinista Full",email:"jean.urquiaga@efevalparaiso.cl"},
+    {nombre:"Urrutia Hidalgo Jean Carlo",rut:"18.271.093-8",cargo:"Maquinista Full",email:"jean.urrutia@efevalparaiso.cl"},
+    {nombre:"Utreras Pinto Jose Andres",rut:"16.201.304-1",cargo:"Maquinista Full",email:"jose.utreras@efevalparaiso.cl"},
+    {nombre:"Valdevenito Cortes Eduardo Andres",rut:"19.395.120-1",cargo:"Partime",email:"eduardo.valdebenito@efevalparaiso.cl"},
+    {nombre:"Valenzuela Gonzalez Rodrigo Andres",rut:"17.120.040-7",cargo:"Partime",email:"rodrigo.valenzuela@efevalparaiso.cl"},
+    {nombre:"Valenzuela Montes Juan Baustista",rut:"09.324.194-0",cargo:"Maquinista Full",email:"juan.valenzuela@efevalparaiso.cl"},
+    {nombre:"Valenzuela Muñoz Felix Antonio",rut:"17.275.516-K",cargo:"Maquinista Full",email:"felix.valenzuela@efevalparaiso.cl"},
+    {nombre:"Varas Zamora Mauricio",rut:"16.234.290-8",cargo:"Partime",email:"mauricio.varas@efevalparaiso.cl"},
+    {nombre:"Vargas Vega Gabriel Eduardo",rut:"10.231.281-3",cargo:"Maquinista Full",email:"gabriel.vargas@efevalparaiso.cl"},
+    {nombre:"Vasquez Arias Claudio Hernan",rut:"13.723.324-K",cargo:"Maquinista Full",email:"cvasquez@efevalparaiso.cl"},
+    {nombre:"Vega Palacios Claudio Andres",rut:"17.272.936-3",cargo:"Maquinista Full",email:"claudio.vega@efevalparaiso.cl"},
+    {nombre:"Vega Sagredo Diego Esteban",rut:"18.274.302-K",cargo:"Maquinista Full",email:"diego.vega@efevalparaiso.cl"},
+    {nombre:"Vidal Garcia Marcos Guillermo",rut:"17.805.692-1",cargo:"Partime",email:"marcos.vidal@efevalparaiso.cl"},
+    {nombre:"Villalobos Mesa Pablo Christian",rut:"17.568.861-7",cargo:"Maquinista Full",email:"pablo.villalobos@efevalparaiso.cl"},
+    {nombre:"Yañez Flores Lirayem Scarlett",rut:"21.025.424-2",cargo:"Partime",email:"lirayem.yanez@efevalparaiso.cl"},
+    {nombre:"Zack Rosso Max",rut:"19.132.384-K",cargo:"Maquinista Full",email:"max.rosso@efevalparaiso.cl"},
+    {nombre:"Zamora Gonzalez Ruben Gerardo",rut:"08.957.759-4",cargo:"Partime",email:"ruben.zamora@efevalparaiso.cl"},
+    {nombre:"Zamora Salinas Jorge Luis",rut:"18.658.951-3",cargo:"Maquinista Full",email:"jorge.zamora@efevalparaiso.cl"}
+  ];
+
+  let filteredList = [...funcionarios];
+
+  /* ── FECHA y CALENDARIO ── */
+  const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  const MESES_CAP = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+  const DOW = ["Do","Lu","Ma","Mi","Ju","Vi","Sá"];
+
+  const hoyReal = new Date();
+  let selectedDate = new Date(hoyReal);
+  let calView = { y: hoyReal.getFullYear(), m: hoyReal.getMonth() };
+
+  function formatFechaObj(d) {
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    return `${dd}-${mm}-${yyyy}`;
+  }
+  function setFechaDisplay() {
+    document.getElementById('s3Fecha').textContent = formatFechaObj(selectedDate);
+    document.getElementById('fechaHoy').textContent = formatFechaObj(hoyReal);
+  }
+  setFechaDisplay();
+
+  let calTarget = 'solicitud'; // 'solicitud' | 'entrega'
+
+  function openCalendar() {
+    calTarget = 'solicitud';
+    calView = { y: selectedDate.getFullYear(), m: selectedDate.getMonth() };
+    renderCalendar();
+    document.getElementById('calOverlay').classList.add('open');
+  }
+  function closeCalendar() {
+    document.getElementById('calOverlay').classList.remove('open');
+  }
+  function overlayClick(e) {
+    if (e.target === document.getElementById('calOverlay')) closeCalendar();
+  }
+  function calMove(dir) {
+    calView.m += dir;
+    if (calView.m > 11) { calView.m = 0; calView.y++; }
+    if (calView.m < 0)  { calView.m = 11; calView.y--; }
+    renderCalendar();
+  }
+  function renderCalendar() {
+    document.getElementById('calTitle').textContent = `${MESES_CAP[calView.m]} ${calView.y}`;
+    const grid = document.getElementById('calGrid');
+    let html = DOW.map(d => `<div class="cal-dow">${d}</div>`).join('');
+    const firstDay = new Date(calView.y, calView.m, 1).getDay();
+    const daysInMonth = new Date(calView.y, calView.m + 1, 0).getDate();
+    for (let i = 0; i < firstDay; i++) html += `<div class="cal-day empty"></div>`;
+    for (let d = 1; d <= daysInMonth; d++) {
+      const isToday = d === hoyReal.getDate() && calView.m === hoyReal.getMonth() && calView.y === hoyReal.getFullYear();
+      const isSel  = d === selectedDate.getDate() && calView.m === selectedDate.getMonth() && calView.y === selectedDate.getFullYear();
+      const cls = [isToday ? 'today' : '', isSel ? 'selected' : ''].filter(Boolean).join(' ');
+      html += `<button class="cal-day ${cls}" onclick="selectDay(${d})">${d}</button>`;
+    }
+    grid.innerHTML = html;
+  }
+  function selectDay(d) {
+    if (calTarget === 'entrega') {
+      selectedDateEntrega = new Date(calView.y, calView.m, d);
+      document.getElementById('s5Fecha').textContent = formatFechaObj(selectedDateEntrega);
+    } else if (calTarget === 's6') {
+      selectedDateS6 = new Date(calView.y, calView.m, d);
+      document.getElementById('s6Fecha').textContent = formatFechaObj(selectedDateS6);
+    } else {
+      selectedDate = new Date(calView.y, calView.m, d);
+      document.getElementById('s3Fecha').textContent = formatFechaObj(selectedDate);
+    }
+    renderCalendar();
+    setTimeout(closeCalendar, 180);
+  }
+
+  /* ── NAVEGACIÓN ── */
+  function goTo(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  /* ── LISTA FUNCIONARIOS ── */
+  function renderList() {
+    const list = document.getElementById('funcionarioList');
+    const noRes = document.getElementById('noResults');
+    if (filteredList.length === 0) {
+      list.innerHTML = '';
+      noRes.style.display = 'block';
+      return;
+    }
+    noRes.style.display = 'none';
+    list.innerHTML = filteredList.map((f, i) =>
+      `<div class="funcionario-item" onclick="selectFuncionario(${funcionarios.indexOf(f)})">${f.nombre}</div>`
+    ).join('');
+  }
+
+  function filterList() {
+    const q = document.getElementById('searchInput').value.toLowerCase().trim();
+    filteredList = q
+      ? funcionarios.filter(f => f.nombre.toLowerCase().includes(q))
+      : [...funcionarios];
+    renderList();
+  }
+
+  function selectFuncionario(idx) {
+    const f = funcionarios[idx];
+    document.getElementById('s3Funcionario').textContent = f.nombre;
+    document.getElementById('s3Rut').textContent = f.rut;
+    document.getElementById('s3Cargo').textContent = f.cargo;
+    // reset form
+    document.getElementById('tipoCalzado').value = 'NO';
+    document.getElementById('adjuntoPanel').classList.remove('visible');
+    resetAdjuntos();
+    goTo('screen3');
+  }
+
+  /* ── CALZADO ESPECIAL ── */
+  function onCalzadoChange() {
+    const val = document.getElementById('tipoCalzado').value;
+    const panel = document.getElementById('adjuntoPanel');
+    if (val === 'especial') {
+      panel.classList.add('visible');
+    } else {
+      panel.classList.remove('visible');
+    }
+  }
+
+  /* ── ADJUNTOS (multi-archivo) ── */
+  let adjuntosLista = [];
+
+  function triggerFile() {
+    document.getElementById('fileInput').value = '';
+    document.getElementById('fileInput').click();
+  }
+  function triggerCamera() {
+    document.getElementById('cameraInput').value = '';
+    document.getElementById('cameraInput').click();
+  }
+  function onFileSelected(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    // evitar duplicados por nombre
+    if (adjuntosLista.find(f => f.name === file.name)) {
+      showToast('Ese archivo ya fue adjuntado');
+      return;
+    }
+    adjuntosLista.push(file);
+    renderAdjuntos();
+    showToast('Archivo adjuntado correctamente');
+  }
+  function removeAdjunto(idx) {
+    adjuntosLista.splice(idx, 1);
+    renderAdjuntos();
+  }
+  function renderAdjuntos() {
+    const empty = document.getElementById('adjuntoEmpty');
+    const lista = document.getElementById('adjuntoLista');
+    if (adjuntosLista.length === 0) {
+      empty.style.display = 'block';
+      lista.innerHTML = '';
+      return;
+    }
+    empty.style.display = 'none';
+    lista.innerHTML = adjuntosLista.map((f, i) => {
+      const isImg = f.type.startsWith('image/');
+      const icon = isImg ? 'ti-photo' : 'ti-file-text';
+      // truncar nombre largo
+      const nombre = f.name.length > 28 ? f.name.substring(0, 26) + '…' : f.name;
+      return `
+        <div class="adjunto-item">
+          <i class="ti ${icon} adjunto-item-icon" aria-hidden="true"></i>
+          <span class="adjunto-item-name" title="${f.name}">${nombre}</span>
+          <button class="adjunto-item-remove" onclick="removeAdjunto(${i})" aria-label="Eliminar archivo">
+            <i class="ti ti-x" aria-hidden="true"></i>
+          </button>
+        </div>`;
+    }).join('');
+  }
+  /* ── RESET PANTALLA 3 ── */
+  function resetScreen3() {
+    // Limpiar selector de funcionario
+    document.getElementById('s3Funcionario').textContent = '—';
+    document.getElementById('s3Rut').textContent         = '—';
+    document.getElementById('s3Cargo').textContent       = '—';
+    document.getElementById('s3Fecha').textContent       = formatFechaObj(new Date());
+    // Reset selectores EPP
+    document.getElementById('tipoCalzado').value      = 'NO';
+    document.getElementById('tallaCalzado').value     = '';
+    document.getElementById('chaquetaGeologa').value  = 'NO';
+    document.getElementById('cascoSelect').value      = 'NO';
+    document.getElementById('guantesSelect').value    = 'NO';
+    // Ocultar panel adjuntos y limpiar archivos
+    document.getElementById('adjuntoPanel').classList.remove('visible');
+    resetAdjuntos();
+    // Reset buscador de funcionarios
+    document.getElementById('searchInput').value = '';
+    filterList();
+  }
+
+  function resetAdjuntos() {
+    adjuntosLista = [];
+    renderAdjuntos();
+  }
+
+  /* ── CALENDARIO ENTREGA ── */
+  let selectedDateEntrega = new Date();
+  function openCalendarEntrega() {
+    calTarget = 'entrega';
+    calView = { y: selectedDateEntrega.getFullYear(), m: selectedDateEntrega.getMonth() };
+    renderCalendar();
+    document.getElementById('calOverlay').classList.add('open');
+  }
+  /* ── SUPABASE CONFIG ── */
+  const SUPABASE_URL = 'https://zgwupiifiqpeggytwdyu.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_Pd728Y-pURP0TIBuFaBpbQ_cL9TZ1gd';
+  const TABLA_EPP    = 'BD_Solicitudes_EPP';
+
+  const SB_HEADERS = {
+    'Content-Type':  'application/json',
+    'apikey':        SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`
+  };
+
+  /* ── SUBIR ARCHIVOS A SUPABASE STORAGE ── */
+  const BUCKET = 'epp-adjuntos';
+
+  async function subirArchivo(file, rut) {
+    const ext      = file.name.split('.').pop();
+    const ts       = Date.now();
+    const fileName = `${rut.replace(/\./g,'').replace(/-/g,'')}_${ts}.${ext}`;
+    const path     = `calzado-especial/${fileName}`;
+
+    const resp = await fetch(
+      `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${path}`,
+      {
+        method:  'POST',
+        headers: {
+          'apikey':        SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type':  file.type,
+          'x-upsert':      'true'
+        },
+        body: file
+      }
+    );
+
+    if (!resp.ok) {
+      const txt = await resp.text();
+      console.error('Storage upload error:', resp.status, txt);
+      return null;
+    }
+
+    // URL pública del archivo
+    return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`;
+  }
+
+  /* ── ENVIAR A SUPABASE ── */
+  async function enviarSolicitud() {
+    const tipo = document.getElementById('tipoCalzado').value;
+    if (tipo === 'especial' && adjuntosLista.length === 0) {
+      showToast('Debe adjuntar al menos un archivo');
+      return;
+    }
+
+    const funcionarioNombre = document.getElementById('s3Funcionario').textContent;
+    if (!funcionarioNombre || funcionarioNombre === '—') {
+      showToast('Debe seleccionar un funcionario');
+      return;
+    }
+
+    const rut      = document.getElementById('s3Rut').textContent;
+    const cargo    = document.getElementById('s3Cargo').textContent;
+    const fecha    = document.getElementById('s3Fecha').textContent;
+    const talla    = document.getElementById('tallaCalzado').value;
+    const chaqueta = document.getElementById('chaquetaGeologa').value;
+    const casco    = document.getElementById('cascoSelect').value;
+    const guantes  = document.getElementById('guantesSelect').value;
+    const func     = funcionarios.find(f => f.nombre === funcionarioNombre);
+    const correo   = func ? func.email : '';
+    const tipoLabel = tipo === 'especial' ? 'Calzado Seg. Especial'
+                    : tipo === 'normal'   ? 'Calzado Seg. Normal' : 'NO';
+
+    showToast('Guardando solicitud...');
+
+    // Subir archivos adjuntos si los hay
+    let urlsAdjuntos = '';
+    if (tipo === 'especial' && adjuntosLista.length > 0) {
+      showToast('Subiendo archivos adjuntos...');
+      const urls = [];
+      for (const file of adjuntosLista) {
+        const url = await subirArchivo(file, rut);
+        if (url) urls.push(url);
+      }
+      urlsAdjuntos = urls.join(',');
+      console.log('URLs adjuntos:', urlsAdjuntos);
+    }
+
+    const payload = {
+      Funcionario:       funcionarioNombre,
+      Rut:               rut,
+      Cargo:             cargo,
+      Fecha_Solictud:    fecha,
+      Tipo_Calzado:      tipoLabel,
+      Talla_Calzado:     talla,
+      Chaqueta_Geologa:  chaqueta,
+      Casco:             casco,
+      Guantes:           guantes,
+      Correo:            correo,
+      Estado:            'Pendiente',
+      Datos_adjuntos:    urlsAdjuntos || null
+    };
+
+    console.log('Enviando a Supabase:', payload);
+
+    try {
+      const resp = await fetch(`${SUPABASE_URL}/rest/v1/${TABLA_EPP}`, {
+        method:  'POST',
+        headers: { ...SB_HEADERS, 'Prefer': 'return=representation' },
+        body:    JSON.stringify(payload)
+      });
+
+      const text = await resp.text();
+      console.log('Supabase status:', resp.status, 'body:', text);
+
+      if (resp.status === 200 || resp.status === 201) {
+        showToast('✓ Solicitud guardada correctamente');
+        resetScreen3();
+        setTimeout(() => goTo('screen1'), 2000);
+      } else {
+        let hint = '';
+        try { const e = JSON.parse(text); hint = e.message || e.hint || ''; } catch(x){}
+        showToast('Error: ' + (hint || resp.status));
+        console.error('Detalle error Supabase:', text);
+      }
+    } catch (err) {
+      console.error('Fetch error:', err);
+      showToast('Error de red. Intente nuevamente.');
+    }
+  }
+
+  /* ══════════════════════════════
+     SCREEN 4 — GALERÍA
+  ══════════════════════════════ */
+
+  let solicitudes = [];
+  let solicitudesFiltradas = [];
+  let solicitudActual = null;
+
+  async function loadGallery() {
+    const gallery = document.getElementById('s4Gallery');
+    gallery.innerHTML = '<div class="s4-loading"><i class="ti ti-loader"></i> Cargando solicitudes...</div>';
+    try {
+      // Leer desde Supabase — ordenar por id descendente
+      const resp = await fetch(
+        `${SUPABASE_URL}/rest/v1/${TABLA_EPP}?select=*&order=ID.desc`,
+        { headers: SB_HEADERS }
+      );
+
+      if (!resp.ok) {
+        const txt = await resp.text();
+        console.error('Supabase GET error:', resp.status, txt);
+        gallery.innerHTML = '<div class="s4-empty">Error al cargar solicitudes.</div>';
+        return;
+      }
+
+      const rawData = await resp.json();
+      console.log('Supabase rows:', rawData.length, rawData[0]);
+
+      // Normalizar columnas (Supabase puede usar nombres distintos)
+      // Mapear cualquier variación de nombre de columna
+  function normalizarFecha(f) {
+    if (!f) return '';
+    // Si ya está en formato dd-mm-yyyy lo devuelve igual
+    if (/^\d{2}-\d{2}-\d{4}$/.test(f)) return f;
+    // Si está en formato yyyy-mm-dd (ISO)
+    if (/^\d{4}-\d{2}-\d{2}/.test(f)) {
+      const d = new Date(f);
+      if (!isNaN(d)) return formatFechaObj(d);
+    }
+    // Si está en formato "8 junio 2026" o "10 diciembre 2025"
+    const mesesMap = {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,
+                      julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12};
+    const m = f.toLowerCase().match(/(\d{1,2})\s+([a-záéíóú]+)\s+(\d{4})/);
+    if (m && mesesMap[m[2]]) {
+      const dd = String(m[1]).padStart(2,'0');
+      const mm = String(mesesMap[m[2]]).padStart(2,'0');
+      return `${dd}-${mm}-${m[3]}`;
+    }
+    return f;
+  }
+
+  // Columnas exactas según tabla Supabase
+      const normalize = r => ({
+        Funcionario:     r.Funcionario      || '',
+        Rut:             r.Rut              || '',
+        Cargo:           r.Cargo            || '',
+        FechaSolicitud:  normalizarFecha(r.Fecha_Solictud || r.Fecha_Solicitud || ''),
+        TipoCalzado:     r.Tipo_Calzado     || 'NO',
+        TallaCalzado:    r.Talla_Calzado    || '-',
+        ChaquetaGeologa: r.Chaqueta_Geologa || 'NO',
+        Casco:           r.Casco            || 'NO',
+        Guantes:         r.Guantes          || 'NO',
+        Estado:          r.Estado           || 'Pendiente',
+        Correo:          r.Correo           || '',
+        DatosAdjuntos:   r.Datos_adjuntos   || '',
+      });
+
+      // Expandir: una fila por EPP
+      solicitudes = [];
+      rawData.forEach((raw, idx) => {
+        const s = normalize(raw);
+        // Detectar el nombre exacto del campo ID que devuelve Supabase
+        const idKey = Object.keys(raw).find(k => k.toLowerCase() === 'id') || null;
+        const supabaseID = idKey ? raw[idKey] : null;
+        const uid = supabaseID || idx;
+        const datosAdj  = raw.Datos_adjuntos || raw.datos_adjuntos || '';
+        if (idx === 0) console.log('KEYS Supabase:', Object.keys(raw), '| idKey:', idKey, '| supabaseID:', supabaseID);
+        if (s.TipoCalzado && s.TipoCalzado !== 'NO')
+          solicitudes.push({ ...s, ID: supabaseID, DatosAdjuntos: datosAdj, _eppLabel: s.TipoCalzado, _eppTalla: s.TallaCalzado, _eppKey: 'calzado',  _uid: uid + '_c'  });
+        if (s.ChaquetaGeologa && s.ChaquetaGeologa !== 'NO')
+          solicitudes.push({ ...s, ID: supabaseID, DatosAdjuntos: datosAdj, _eppLabel: 'Chaqueta Geóloga', _eppTalla: s.ChaquetaGeologa, _eppKey: 'chaqueta', _uid: uid + '_ch' });
+        if (s.Casco === 'SI' || s.Casco === 'Si' || s.Casco === 'si')
+          solicitudes.push({ ...s, ID: supabaseID, DatosAdjuntos: datosAdj, _eppLabel: 'Casco',    _eppTalla: '', _eppKey: 'casco',   _uid: uid + '_ca' });
+        if (s.Guantes === 'SI' || s.Guantes === 'Si' || s.Guantes === 'si')
+          solicitudes.push({ ...s, ID: supabaseID, DatosAdjuntos: datosAdj, _eppLabel: 'Guantes',  _eppTalla: '', _eppKey: 'guantes', _uid: uid + '_g'  });
+      });
+
+      if (solicitudes.length === 0) {
+        gallery.innerHTML = '<div class="s4-empty">No hay solicitudes registradas.</div>';
+        return;
+      }
+
+      solicitudesFiltradas = [...solicitudes];
+      renderGallery();
+    } catch(e) {
+      console.error('loadGallery error:', e);
+      gallery.innerHTML = '<div class="s4-empty">Error de conexión. Intente nuevamente.</div>';
+    }
+  }
+
+  function filterGallery() {
+    const q   = document.getElementById('s4Search').value.toLowerCase().trim();
+    const epp = document.getElementById('s4FilterEPP').value.toLowerCase();
+    solicitudesFiltradas = solicitudes.filter(s => {
+      const matchNombre = s.Funcionario.toLowerCase().includes(q);
+      if (!epp) return matchNombre;
+      if (epp === 'calzado')  return matchNombre && s._eppKey === 'calzado';
+      if (epp === 'casco')    return matchNombre && s._eppKey === 'casco';
+      if (epp === 'guantes')  return matchNombre && s._eppKey === 'guantes';
+      if (epp === 'chaqueta') return matchNombre && s._eppKey === 'chaqueta';
+      return matchNombre;
+    });
+    renderGallery();
+  }
+
+  function renderGallery() {
+    const gallery = document.getElementById('s4Gallery');
+    if (solicitudesFiltradas.length === 0) {
+      gallery.innerHTML = '<div class="s4-empty">No hay solicitudes que coincidan.</div>';
+      return;
+    }
+
+    // Ordenar por fecha más nueva primero
+    const sorted = [...solicitudesFiltradas].sort((a, b) => {
+      const da = new Date(a.FechaSolicitud || 0);
+      const db = new Date(b.FechaSolicitud || 0);
+      return db - da;
+    });
+
+    gallery.innerHTML = sorted.map(s => {
+      const tieneAdjunto = s.DatosAdjuntos && s.DatosAdjuntos.length > 0;
+      const clipIcon = tieneAdjunto
+        ? `<span title="Tiene adjunto" style="display:flex;align-items:center;gap:3px;font-size:11px;color:#1B3A6B;font-weight:600;">
+             <i class="ti ti-paperclip" style="font-size:14px;color:#1B3A6B"></i>
+           </span>`
+        : '';
+      const badge = s.Estado === 'Pendiente'
+        ? '<span class="s4-badge badge-pendiente">Pendiente</span>'
+        : '<span class="s4-badge badge-entregado">Entregado</span>';
+      const eppText = s._eppTalla ? `${s._eppLabel} T:${s._eppTalla}` : s._eppLabel;
+      const btnDisabled = s.Estado === 'Entregado' ? 'style="opacity:0.45;pointer-events:none"' : '';
+      return `
+        <div class="s4-card" id="card-${s._uid}" data-uid="${s._uid}">
+          <div class="s4-card-top">
+            <div class="s4-card-nombre">${s.Funcionario}</div>
+            <div style="display:flex;gap:6px;align-items:center">
+              <button class="btn-entregar" onclick="abrirEntrega('${s._uid}')" ${btnDisabled}>Entregar</button>
+              <button onclick="confirmarEliminar('${s._uid}')" title="Eliminar solicitud"
+                style="background:none;border:2px solid #C8102E;border-radius:50%;width:30px;height:30px;
+                       display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+                <i class="ti ti-x" style="font-size:13px;color:#C8102E;"></i>
+              </button>
+            </div>
+          </div>
+          <div class="s4-card-meta">
+            <div class="s4-meta-row">
+              <span class="s4-meta-label">Fecha Solicitud :</span>
+              <span class="s4-meta-value">${s.FechaSolicitud}</span>
+            </div>
+            <div class="s4-meta-row">
+              <span class="s4-meta-label">EPP :</span>
+              <span class="s4-meta-value" style="color:#1B3A6B;font-weight:600">${eppText}</span>
+            </div>
+            <div class="s4-meta-row">
+              <span class="s4-meta-label">Estado :</span>
+              <span>${badge}</span>
+              ${clipIcon}
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ── POPUP CONFIRMAR ELIMINAR ── */
+  let _idPendienteEliminar = null;
+
+  function confirmarEliminar(uid) {
+    // Extraer ID numérico del uid (ej: "18_ca" -> 18)
+    const idFromUid = parseInt(uid.split('_')[0]);
+    console.log('Confirmar eliminar uid:', uid, 'idFromUid:', idFromUid);
+    document.getElementById('confirmOkBtn').onclick = () => {
+      cerrarConfirm();
+      eliminarSolicitud(idFromUid, uid);
+    };
+    document.getElementById('confirmOverlay').classList.add('open');
+  }
+
+  function cerrarConfirm() {
+    document.getElementById('confirmOverlay').classList.remove('open');
+    _idPendienteEliminar = null;
+  }
+
+  async function eliminarSolicitud(idRegistro, uid) {
+    showToast('Eliminando...');
+    console.log('Eliminando ID:', idRegistro, 'uid:', uid);
+    try {
+      const solicitud = solicitudes.find(s => s._uid === uid);
+      
+      // Eliminar archivos de Storage si tiene adjuntos
+      if (solicitud && solicitud.DatosAdjuntos) {
+        const urls = solicitud.DatosAdjuntos.split(',').filter(u => u.trim());
+        for (const url of urls) {
+          const match = url.match(/\/object\/public\/epp-adjuntos\/(.+)/);
+          if (match) {
+            const filePath = match[1];
+            await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${filePath}`,
+              { method: 'DELETE', headers: { ...SB_HEADERS } }
+            );
+          }
+        }
+      }
+
+      // Eliminar registro de Supabase
+      const resp = await fetch(
+        `${SUPABASE_URL}/rest/v1/${TABLA_EPP}?ID=eq.${idRegistro}`,
+        { method: 'DELETE', headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' } }
+      );
+
+      if (resp.ok || resp.status === 204) {
+        // Eliminar TODAS las filas expandidas del mismo ID original
+        solicitudes = solicitudes.filter(s => s.ID !== idRegistro);
+        solicitudesFiltradas = solicitudesFiltradas.filter(s => s.ID !== idRegistro);
+        renderGallery();
+        showToast('✓ Solicitud eliminada');
+      } else {
+        const txt = await resp.text();
+        console.error('Delete error:', resp.status, txt);
+        showToast('Error al eliminar.');
+      }
+    } catch(e) {
+      console.error('Delete error:', e);
+      showToast('Error de conexión.');
+    }
+  }
+
+  function abrirEntrega(uid) {
+    // Buscar por UID único — solo ese EPP específico
+    solicitudActual = solicitudes.find(s => s._uid === uid);
+    if (!solicitudActual) return;
+
+    // Llenar datos del funcionario
+    document.getElementById('s5Nombre').textContent = solicitudActual.Funcionario;
+    document.getElementById('s5Rut').textContent    = solicitudActual.Rut;
+    document.getElementById('s5Cargo').textContent  = solicitudActual.Cargo;
+    document.getElementById('s5Fecha').textContent  = formatFechaObj(new Date());
+
+    // Mostrar SOLO el EPP de esta fila específica
+    const eppLabel = solicitudActual._eppTalla
+      ? `${solicitudActual._eppLabel}`
+      : solicitudActual._eppLabel;
+    const eppTalla = solicitudActual._eppTalla || '';
+
+    document.getElementById('s5EppList').innerHTML = `
+      <div class="s5-epp-row">
+        <span class="s5-epp-text">${eppLabel}</span>
+        <span class="s5-epp-talla">${eppTalla}</span>
+        <button onclick="goTo('screen4');loadGallery()" title="Volver a galería"
+          style="background:none;border:2px solid #C8102E;border-radius:50%;width:32px;height:32px;
+                 display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+          <i class="ti ti-x" style="font-size:14px;color:#C8102E;" aria-hidden="true"></i>
+        </button>
+      </div>`;
+
+    // Reset IL y RUT
+    poblarIL();
+    document.getElementById('s5RutEntrega').textContent = '—';
+
+    // Reset firmas
+    firmaEntrega = null;
+    firmaRecibe  = null;
+    document.getElementById('previewEntrega').style.display = 'none';
+    document.getElementById('previewRecibe').style.display  = 'none';
+    document.getElementById('btnFirmaEntrega').classList.remove('signed');
+    document.getElementById('btnFirmaRecibe').classList.remove('signed');
+    document.getElementById('btnEnviarDoc').classList.remove('active-btn');
+
+    goTo('screen5');
+  }
+
+  /* ══════════════════════════════
+     SCREEN 5 — IL INSPECTORES
+  ══════════════════════════════ */
+  const inspectores = funcionarios.filter(f =>
+    f.cargo.toLowerCase().includes('inspector')
+  );
+
+  function poblarIL() {
+    const sel = document.getElementById('s5IL');
+    sel.innerHTML = '<option value="">Seleccionar...</option>';
+    inspectores.forEach((f, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = f.nombre;
+      sel.appendChild(opt);
+    });
+  }
+
+  function onILChange() {
+    const idx = document.getElementById('s5IL').value;
+    const rutEl = document.getElementById('s5RutEntrega');
+    if (idx === '') {
+      rutEl.textContent = '—';
+    } else {
+      rutEl.textContent = inspectores[idx].rut || '—';
+    }
+  }
+
+  /* ══════════════════════════════
+     POPUP FIRMA
+  ══════════════════════════════ */
+  let firmaTarget   = ''; // 'entrega' | 'recibe'
+  let firmaEntrega  = null; // dataURL guardado
+  let firmaRecibe   = null;
+  let popupDrawing  = false;
+
+  function abrirFirmaPopup(tipo) {
+    firmaTarget = tipo;
+    document.getElementById('firmaPopupTitle').textContent =
+      tipo === 'entrega' ? 'Firma Entrega' : 'Firma Recibe';
+    document.getElementById('firmaOverlay').classList.add('open');
+    setTimeout(() => initPopupCanvas(), 80);
+  }
+
+  function cerrarFirmaPopup() {
+    document.getElementById('firmaOverlay').classList.remove('open');
+  }
+
+  function initPopupCanvas() {
+    const canvas = document.getElementById('canvasFirmaPopup');
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = '#1B3A6B';
+    ctx.lineWidth   = 2.5;
+    ctx.lineCap     = 'round';
+    ctx.lineJoin    = 'round';
+
+    const getPos = e => {
+      const r = canvas.getBoundingClientRect();
+      const src = e.touches ? e.touches[0] : e;
+      return { x: (src.clientX - r.left) * (canvas.width / r.width),
+               y: (src.clientY - r.top)  * (canvas.height / r.height) };
+    };
+
+    canvas.onmousedown = canvas.ontouchstart = e => {
+      e.preventDefault(); popupDrawing = true;
+      const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y);
+    };
+    canvas.onmousemove = canvas.ontouchmove = e => {
+      e.preventDefault();
+      if (!popupDrawing) return;
+      const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke();
+    };
+    canvas.onmouseup = canvas.ontouchend = canvas.onmouseleave = () => {
+      popupDrawing = false;
+    };
+  }
+
+  function limpiarFirmaPopup() {
+    const canvas = document.getElementById('canvasFirmaPopup');
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function isPopupEmpty() {
+    const canvas = document.getElementById('canvasFirmaPopup');
+    return !canvas.getContext('2d')
+      .getImageData(0, 0, canvas.width, canvas.height).data
+      .some(v => v !== 0);
+  }
+
+  function guardarFirmaPopup() {
+    if (isPopupEmpty()) {
+      showToast('Debe firmar antes de guardar');
+      return;
+    }
+    const dataURL = document.getElementById('canvasFirmaPopup').toDataURL('image/png');
+
+    if (firmaTarget === 's6_entrega') {
+      s6FirmaEntrega = dataURL;
+      document.getElementById('s6ImgFirmaEntrega').src = dataURL;
+      document.getElementById('s6PreviewEntrega').style.display = 'block';
+      document.getElementById('s6BtnFirmaEntrega').classList.add('signed');
+    } else if (firmaTarget === 's6_recibe') {
+      s6FirmaRecibe = dataURL;
+      document.getElementById('s6ImgFirmaRecibe').src = dataURL;
+      document.getElementById('s6PreviewRecibe').style.display = 'block';
+      document.getElementById('s6BtnFirmaRecibe').classList.add('signed');
+    } else if (firmaTarget === 'entrega') {
+      firmaEntrega = dataURL;
+      document.getElementById('imgFirmaEntrega').src = dataURL;
+      document.getElementById('previewEntrega').style.display = 'block';
+      document.getElementById('btnFirmaEntrega').classList.add('signed');
+    } else {
+      firmaRecibe = dataURL;
+      document.getElementById('imgFirmaRecibe').src = dataURL;
+      document.getElementById('previewRecibe').style.display = 'block';
+      document.getElementById('btnFirmaRecibe').classList.add('signed');
+    }
+    cerrarFirmaPopup();
+    showToast('Firma guardada ✓');
+  }
+
+  function borrarFirma(tipo) {
+    if (tipo === 'entrega') {
+      firmaEntrega = null;
+      document.getElementById('previewEntrega').style.display = 'none';
+      document.getElementById('btnFirmaEntrega').classList.remove('signed');
+    } else {
+      firmaRecibe = null;
+      document.getElementById('previewRecibe').style.display = 'none';
+      document.getElementById('btnFirmaRecibe').classList.remove('signed');
+    }
+  }
+
+  async function guardarEntrega() {
+    if (!solicitudActual) return;
+    if (!firmaEntrega || !firmaRecibe) {
+      showToast('Debe completar ambas firmas');
+      return;
+    }
+
+    // Obtener ID sin importar mayúsculas/minúsculas
+    const idRegistro = solicitudActual.ID || solicitudActual.id;
+    if (!idRegistro) {
+      showToast('Error: sin ID de registro');
+      return;
+    }
+
+    showToast('Guardando entrega...');
+
+    try {
+      const fechaHoy = new Date().toLocaleDateString('es-CL', {day:'2-digit', month:'2-digit', year:'numeric'});
+
+      const resp = await fetch(
+        `${SUPABASE_URL}/rest/v1/${TABLA_EPP}?ID=eq.${idRegistro}`,
+        {
+          method: 'PATCH',
+          headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' },
+          body: JSON.stringify({ Estado: 'Entregado', Fecha_Entrega: fechaHoy })
+        }
+      );
+
+      if (!resp.ok) {
+        const err = await resp.text();
+        showToast('Error Supabase: ' + resp.status);
+        console.error(err);
+        return;
+      }
+
+      showToast('✓ Entrega registrada correctamente');
+      // Volver a galería y recargar desde Supabase
+      await loadGallery();
+      goTo('screen4');
+
+    } catch (e) {
+      console.error('guardarEntrega error:', e);
+      showToast('Error de conexión');
+    }
+  }
+
+  function enviarDocumento() {
+    showToast('Documento enviado al funcionario ✓');
+  }
+
+  /* ══════════════════════════════
+     SCREEN 6 — ENTREGA EQUIPOS
+  ══════════════════════════════ */
+  const EQUIPOS_LISTA = [
+    'Lic. P1','Celular Empresa','Juego de Llaves',
+    'Linterna Casco','Notebook','Radio Digital UHF',
+    'Radio Kenwood','Radio Mobilink','Tablet'
+  ];
+
+  let s6FirmaEntrega   = null;
+  let s6FirmaRecibe    = null;
+  let s6FirmaTarget    = '';
+  let s6EquipoSelected = null;
+  let selectedDateS6   = new Date();
+  let s6FuncIdx        = null; // índice del funcionario seleccionado
+
+  /* ── Buscador Nombre S6 ── */
+  function toggleS6Dropdown() {
+    const dd = document.getElementById('s6Dropdown');
+    const isOpen = dd.style.display !== 'none';
+    if (isOpen) { dd.style.display = 'none'; return; }
+    renderS6DropdownList('');
+    dd.style.display = 'block';
+    setTimeout(() => document.getElementById('s6SearchInput').focus(), 60);
+  }
+
+  function renderS6DropdownList(q) {
+    const list = document.getElementById('s6DropdownList');
+    const filtered = q
+      ? funcionarios.filter(f => f.nombre.toLowerCase().includes(q.toLowerCase()))
+      : funcionarios;
+    list.innerHTML = filtered.map((f, i) => {
+      const idx = funcionarios.indexOf(f);
+      const sel = idx === s6FuncIdx ? ' selected' : '';
+      return `<div class="s6-dropdown-item${sel}" onclick="selectS6Funcionario(${idx})">${f.nombre}</div>`;
+    }).join('') || '<div style="padding:12px 14px;color:#aaa;font-size:13px">Sin resultados</div>';
+  }
+
+  function filterS6Funcionarios() {
+    const q = document.getElementById('s6SearchInput').value;
+    renderS6DropdownList(q);
+  }
+
+  function selectS6Funcionario(idx) {
+    s6FuncIdx = idx;
+    const f = funcionarios[idx];
+    document.getElementById('s6NombreDisplay').textContent = f.nombre;
+    document.getElementById('s6Rut').textContent   = f.rut   || '—';
+    document.getElementById('s6Cargo').textContent = f.cargo || '—';
+    document.getElementById('s6Dropdown').style.display = 'none';
+    document.getElementById('s6SearchInput').value = '';
+  }
+
+  // Cerrar dropdown al tocar fuera
+  document.addEventListener('click', e => {
+    const box = document.getElementById('s6SearchBox');
+    const dd  = document.getElementById('s6Dropdown');
+    if (dd && !dd.contains(e.target) && box && !box.contains(e.target)) {
+      dd.style.display = 'none';
+    }
+  });
+
+  function initScreen6() {
+    s6FirmaEntrega   = null;
+    s6FirmaRecibe    = null;
+    s6EquipoSelected = null;
+    s6FuncIdx        = null;
+    selectedDateS6   = new Date();
+
+    document.getElementById('s6Fecha').textContent        = formatFechaObj(selectedDateS6);
+    document.getElementById('s6NombreDisplay').textContent = 'Seleccionar...';
+    document.getElementById('s6Rut').textContent           = '—';
+    document.getElementById('s6Cargo').textContent         = '—';
+    document.getElementById('s6EquipoLabel').textContent   = 'Equipo a Entregar';
+    document.getElementById('s6BtnEquipo').classList.remove('selected');
+    document.getElementById('s6PreviewEntrega').style.display = 'none';
+    document.getElementById('s6PreviewRecibe').style.display  = 'none';
+    document.getElementById('s6BtnFirmaEntrega').classList.remove('signed');
+    document.getElementById('s6BtnFirmaRecibe').classList.remove('signed');
+    document.getElementById('s6BtnGuardar').classList.remove('active-btn');
+    document.getElementById('s6Dropdown').style.display   = 'none';
+
+    // Poblar selector Entrega (solo Inspectores)
+    const selEntrega = document.getElementById('s6Entrega');
+    selEntrega.innerHTML = '<option value="">Seleccionar...</option>';
+    inspectores.forEach((f, i) => {
+      const o = document.createElement('option');
+      o.value = i; o.textContent = f.nombre;
+      selEntrega.appendChild(o);
+    });
+  }
+
+  function onS6NombreChange() {} // reemplazado por selectS6Funcionario
+  function onS6EntregaChange() {}
+
+  /* ── Popup Equipos ── */
+  function abrirEquiposPopup() {
+    const lista = document.getElementById('equiposLista');
+    lista.innerHTML = EQUIPOS_LISTA.map(e => `
+      <div class="equipo-item${s6EquipoSelected===e?' selected':''}" onclick="seleccionarEquipo('${e}')">${e}</div>
+    `).join('');
+    document.getElementById('equiposOverlay').classList.add('open');
+  }
+
+  function equiposOverlayClick(e) {
+    if (e.target === document.getElementById('equiposOverlay')) cerrarEquiposPopup();
+  }
+  function cerrarEquiposPopup() {
+    document.getElementById('equiposOverlay').classList.remove('open');
+  }
+
+  function seleccionarEquipo(equipo) {
+    s6EquipoSelected = equipo;
+    document.getElementById('s6EquipoLabel').textContent = equipo;
+    document.getElementById('s6BtnEquipo').classList.add('selected');
+    cerrarEquiposPopup();
+    if (equipo === 'Lic. P1') {
+      setTimeout(() => abrirLicP1(), 150);
+    } else {
+      showToast('Equipo seleccionado: ' + equipo);
+    }
+  }
+
+  /* ══════════════════════════════
+     POPUP LIC. P1
+  ══════════════════════════════ */
+  let licFoto1     = null;
+  let licFoto2     = null;
+  let licTool      = 'pen';
+  let licDrawing   = false;
+  let licCanvasCtx = null;
+
+  function abrirLicP1() {
+    licFoto1 = null; licFoto2 = null;
+    document.getElementById('licp1Img1').style.display = 'none';
+    document.getElementById('licp1Ph1').style.display  = 'flex';
+    document.getElementById('licp1Img2').style.display = 'none';
+    document.getElementById('licp1Ph2').style.display  = 'flex';
+    document.getElementById('licp1Overlay').classList.add('open');
+    setTimeout(() => initLicCanvas(), 120);
+  }
+
+  function cerrarLicP1() {
+    document.getElementById('licp1Overlay').classList.remove('open');
+  }
+
+  function triggerFotoLic(n) {
+    document.getElementById('licp1File' + n).click();
+  }
+
+  function onLicFotoSelected(event, n) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      if (n === 1) {
+        licFoto1 = e.target.result;
+        document.getElementById('licp1Img1').src = licFoto1;
+        document.getElementById('licp1Img1').style.display = 'block';
+        document.getElementById('licp1Ph1').style.display  = 'none';
+      } else {
+        licFoto2 = e.target.result;
+        document.getElementById('licp1Img2').src = licFoto2;
+        document.getElementById('licp1Img2').style.display = 'block';
+        document.getElementById('licp1Ph2').style.display  = 'none';
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function initLicCanvas() {
+    const canvas = document.getElementById('canvasLicP1');
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    licCanvasCtx  = canvas.getContext('2d');
+    licCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    licCanvasCtx.strokeStyle = '#1B3A6B';
+    licCanvasCtx.lineWidth   = 2;
+    licCanvasCtx.lineCap     = 'round';
+
+    const getPos = e => {
+      const r   = canvas.getBoundingClientRect();
+      const src = e.touches ? e.touches[0] : e;
+      return {
+        x: (src.clientX - r.left) * (canvas.width / r.width),
+        y: (src.clientY - r.top)  * (canvas.height / r.height)
+      };
+    };
+
+    canvas.onmousedown = canvas.ontouchstart = e => {
+      e.preventDefault();
+      licDrawing = true;
+      const p = getPos(e);
+      if (licTool === 'erase') {
+        licCanvasCtx.clearRect(p.x - 10, p.y - 10, 20, 20);
+      } else {
+        licCanvasCtx.beginPath();
+        licCanvasCtx.moveTo(p.x, p.y);
+      }
+    };
+    canvas.onmousemove = canvas.ontouchmove = e => {
+      e.preventDefault();
+      if (!licDrawing) return;
+      const p = getPos(e);
+      if (licTool === 'erase') {
+        licCanvasCtx.clearRect(p.x - 10, p.y - 10, 20, 20);
+      } else {
+        licCanvasCtx.lineTo(p.x, p.y);
+        licCanvasCtx.stroke();
+      }
+    };
+    canvas.onmouseup = canvas.ontouchend = canvas.onmouseleave = () => {
+      licDrawing = false;
+    };
+  }
+
+  function setLicTool(tool) {
+    licTool = tool;
+    document.querySelectorAll('.lic-tool').forEach(b => b.classList.remove('active'));
+    const map = { pen:'licToolPen', erase:'licToolErase', line:'licToolLine', text:'licToolText' };
+    if (map[tool]) document.getElementById(map[tool]).classList.add('active');
+    licCanvasCtx.strokeStyle = tool === 'erase' ? '#fff' : '#1B3A6B';
+    licCanvasCtx.lineWidth   = tool === 'erase' ? 20 : 2;
+  }
+
+  function clearLicCanvas() {
+    const canvas = document.getElementById('canvasLicP1');
+    licCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function guardarLicP1() {
+    const canvas   = document.getElementById('canvasLicP1');
+    const firmaImg = canvas.toDataURL('image/png');
+    // Guardar en variable global para usarla al enviar
+    window.licP1Data = { foto1: licFoto1, foto2: licFoto2, firma: firmaImg };
+    cerrarLicP1();
+    showToast('Lic. P1 guardada correctamente ✓');
+  }
+
+  /* Calendario screen 6 */
+  function openCalendarS6() {
+    calTarget = 's6';
+    calView   = { y: selectedDateS6.getFullYear(), m: selectedDateS6.getMonth() };
+    renderCalendar();
+    document.getElementById('calOverlay').classList.add('open');
+  }
+
+  /* Firmas screen 6 */
+  function abrirFirmaPopupS6(tipo) {
+    s6FirmaTarget = tipo;
+    firmaTarget   = 's6_' + tipo; // redirige guardarFirmaPopup
+    document.getElementById('firmaPopupTitle').textContent =
+      tipo === 'entrega' ? 'Firma Entrega' : 'Firma Recibe';
+    document.getElementById('firmaOverlay').classList.add('open');
+    setTimeout(() => initPopupCanvas(), 80);
+  }
+
+  function borrarFirmaS6(tipo) {
+    if (tipo === 'entrega') {
+      s6FirmaEntrega = null;
+      document.getElementById('s6PreviewEntrega').style.display = 'none';
+      document.getElementById('s6BtnFirmaEntrega').classList.remove('signed');
+    } else {
+      s6FirmaRecibe = null;
+      document.getElementById('s6PreviewRecibe').style.display = 'none';
+      document.getElementById('s6BtnFirmaRecibe').classList.remove('signed');
+    }
+  }
+
+  const TABLA_EQUIPOS = 'BD_Entregas_Equipos';
+
+  async function subirFirma(dataURL, nombre) {
+    const res  = await fetch(dataURL);
+    const blob = await res.blob();
+    const path = `firmas/${nombre}_${Date.now()}.png`;
+    const resp = await fetch(
+      `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${path}`,
+      {
+        method:  'POST',
+        headers: {
+          'apikey':        SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type':  'image/png',
+          'x-upsert':      'true'
+        },
+        body: blob
+      }
+    );
+    if (!resp.ok) { console.error('Error firma:', await resp.text()); return ''; }
+    return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`;
+  }
+
+  async function guardarEquipo() {
+    if (!s6EquipoSelected)  { showToast('Debe seleccionar un equipo'); return; }
+    if (!s6FirmaEntrega)    { showToast('Debe completar la Firma Entrega'); return; }
+    if (!s6FirmaRecibe)     { showToast('Debe completar la Firma Recibe'); return; }
+    if (s6FuncIdx === null) { showToast('Debe seleccionar un funcionario'); return; }
+
+    showToast('Guardando...');
+
+    const f        = funcionarios[s6FuncIdx];
+    const ilIdx    = document.getElementById('s6Entrega').value;
+    const ilNombre = ilIdx !== '' ? inspectores[ilIdx].nombre : '';
+    const fecha    = document.getElementById('s6Fecha').textContent;
+    const rutSafe  = (f.rut || '').replace(/\./g,'').replace(/-/g,'');
+
+    // Subir firmas a Storage
+    const urlFirmaEntrega = await subirFirma(s6FirmaEntrega, `entrega_${rutSafe}`);
+    const urlFirmaRecibe  = await subirFirma(s6FirmaRecibe,  `recibe_${rutSafe}`);
+
+    const payload = {
+      Fecha:         fecha,
+      Funcionario:   f.nombre,
+      Rut:           f.rut,
+      Cargo:         f.cargo,
+      Equipo:        s6EquipoSelected,
+      IL:            ilNombre,
+      Firma_Entrega: urlFirmaEntrega,
+      Firma_Recibe:  urlFirmaRecibe
+    };
+
+    console.log('Guardando equipo:', payload);
+
+    try {
+      const resp = await fetch(`${SUPABASE_URL}/rest/v1/${TABLA_EQUIPOS}`, {
+        method:  'POST',
+        headers: { ...SB_HEADERS, 'Prefer': 'return=representation' },
+        body:    JSON.stringify(payload)
+      });
+      const text = await resp.text();
+      if (resp.status === 200 || resp.status === 201) {
+        showToast('✓ Entrega guardada correctamente');
+        initScreen6();
+        setTimeout(() => goTo('screen1'), 2000);
+      } else {
+        let hint = '';
+        try { const e = JSON.parse(text); hint = e.message || e.hint || ''; } catch(x){}
+        showToast('Error: ' + (hint || resp.status));
+        console.error('Error Supabase equipos:', text);
+      }
+    } catch(err) {
+      console.error('Error guardarEquipo:', err);
+      showToast('Error de conexión.');
+    }
+  }
+
+  /* ── TOAST ── */
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  /* ── INIT ── */
+  renderList();
+</script>
+</body>
+</html>
