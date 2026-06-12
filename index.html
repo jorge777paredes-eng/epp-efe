@@ -2124,7 +2124,26 @@
         </div>`;
     }).join('');
   }
-  function resetAdjuntos() {
+  /* ── RESET PANTALLA 3 ── */
+  function resetScreen3() {
+    // Limpiar selector de funcionario
+    document.getElementById('s3Funcionario').textContent = '—';
+    document.getElementById('s3Rut').textContent         = '—';
+    document.getElementById('s3Cargo').textContent       = '—';
+    document.getElementById('s3Fecha').textContent       = formatFechaObj(new Date());
+    // Reset selectores EPP
+    document.getElementById('tipoCalzado').value      = 'NO';
+    document.getElementById('tallaCalzado').value     = '';
+    document.getElementById('chaquetaGeologa').value  = 'NO';
+    document.getElementById('cascoSelect').value      = 'NO';
+    document.getElementById('guantesSelect').value    = 'NO';
+    // Ocultar panel adjuntos y limpiar archivos
+    document.getElementById('adjuntoPanel').classList.remove('visible');
+    resetAdjuntos();
+    // Reset buscador de funcionarios
+    document.getElementById('searchInput').value = '';
+    filterList();
+  }
     adjuntosLista = [];
     renderAdjuntos();
   }
@@ -2251,6 +2270,7 @@
 
       if (resp.status === 200 || resp.status === 201) {
         showToast('✓ Solicitud guardada correctamente');
+        resetScreen3();
         setTimeout(() => goTo('screen1'), 2000);
       } else {
         let hint = '';
@@ -3038,6 +3058,7 @@
       const text = await resp.text();
       if (resp.status === 200 || resp.status === 201) {
         showToast('✓ Entrega guardada correctamente');
+        initScreen6();
         setTimeout(() => goTo('screen1'), 2000);
       } else {
         let hint = '';
