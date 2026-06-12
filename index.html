@@ -1659,12 +1659,6 @@
         </div>
       </div>
 
-      <!-- Recibe -->
-      <div class="s6-row">
-        <div class="s6-label">Recibe</div>
-        <input class="s6-input" id="s6Recibe" type="text" placeholder="">
-      </div>
-
       <!-- Firmas -->
       <div class="s6-firmas-row">
         <button class="s5-btn-firma" id="s6BtnFirmaEntrega" onclick="abrirFirmaPopupS6('entrega')">
@@ -2465,6 +2459,30 @@
     showToast('Eliminando...');
     console.log('Eliminando ID:', idRegistro);
     try {
+      // Buscar la solicitud para obtener los adjuntos
+      const solicitud = solicitudes.find(s => s.ID === idRegistro);
+      
+      // Eliminar archivos de Storage si tiene adjuntos
+      if (solicitud && solicitud.DatosAdjuntos) {
+        const urls = solicitud.DatosAdjuntos.split(',').filter(u => u.trim());
+        for (const url of urls) {
+          // Extraer el path relativo del archivo desde la URL pública
+          const match = url.match(/\/object\/public\/epp-adjuntos\/(.+)/);
+          if (match) {
+            const filePath = match[1];
+            await fetch(
+              `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${filePath}`,
+              {
+                method:  'DELETE',
+                headers: { ...SB_HEADERS }
+              }
+            );
+            console.log('Archivo eliminado de Storage:', filePath);
+          }
+        }
+      }
+
+      // Eliminar registro de la tabla
       const resp = await fetch(
         `${SUPABASE_URL}/rest/v1/${TABLA_EPP}?ID=eq.${idRegistro}`,
         {
@@ -2958,11 +2976,80 @@
     }
   }
 
-  function guardarEquipo() {
-    if (!s6EquipoSelected) { showToast('Debe seleccionar un equipo'); return; }
-    if (!s6FirmaEntrega || !s6FirmaRecibe) { showToast('Debe completar ambas firmas'); return; }
-    showToast('✓ Entrega guardada correctamente');
-    setTimeout(() => goTo('screen1'), 2000);
+  const TABLA_EQUIPOS = 'BD_Entregas_Equipos';
+
+  async function subirFirma(dataURL, nombre) {
+    const res  = await fetch(dataURL);
+    const blob = await res.blob();
+    const path = `firmas/${nombre}_${Date.now()}.png`;
+    const resp = await fetch(
+      `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${path}`,
+      {
+        method:  'POST',
+        headers: {
+          'apikey':        SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type':  'image/png',
+          'x-upsert':      'true'
+        },
+        body: blob
+      }
+    );
+    if (!resp.ok) { console.error('Error firma:', await resp.text()); return ''; }
+    return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`;
+  }
+
+  async function guardarEquipo() {
+    if (!s6EquipoSelected)  { showToast('Debe seleccionar un equipo'); return; }
+    if (!s6FirmaEntrega)    { showToast('Debe completar la Firma Entrega'); return; }
+    if (!s6FirmaRecibe)     { showToast('Debe completar la Firma Recibe'); return; }
+    if (s6FuncIdx === null) { showToast('Debe seleccionar un funcionario'); return; }
+
+    showToast('Guardando...');
+
+    const f        = funcionarios[s6FuncIdx];
+    const ilIdx    = document.getElementById('s6Entrega').value;
+    const ilNombre = ilIdx !== '' ? inspectores[ilIdx].nombre : '';
+    const fecha    = document.getElementById('s6Fecha').textContent;
+    const rutSafe  = (f.rut || '').replace(/\./g,'').replace(/-/g,'');
+
+    // Subir firmas a Storage
+    const urlFirmaEntrega = await subirFirma(s6FirmaEntrega, `entrega_${rutSafe}`);
+    const urlFirmaRecibe  = await subirFirma(s6FirmaRecibe,  `recibe_${rutSafe}`);
+
+    const payload = {
+      Fecha:         fecha,
+      Funcionario:   f.nombre,
+      Rut:           f.rut,
+      Cargo:         f.cargo,
+      Equipo:        s6EquipoSelected,
+      IL:            ilNombre,
+      Firma_Entrega: urlFirmaEntrega,
+      Firma_Recibe:  urlFirmaRecibe
+    };
+
+    console.log('Guardando equipo:', payload);
+
+    try {
+      const resp = await fetch(`${SUPABASE_URL}/rest/v1/${TABLA_EQUIPOS}`, {
+        method:  'POST',
+        headers: { ...SB_HEADERS, 'Prefer': 'return=representation' },
+        body:    JSON.stringify(payload)
+      });
+      const text = await resp.text();
+      if (resp.status === 200 || resp.status === 201) {
+        showToast('✓ Entrega guardada correctamente');
+        setTimeout(() => goTo('screen1'), 2000);
+      } else {
+        let hint = '';
+        try { const e = JSON.parse(text); hint = e.message || e.hint || ''; } catch(x){}
+        showToast('Error: ' + (hint || resp.status));
+        console.error('Error Supabase equipos:', text);
+      }
+    } catch(err) {
+      console.error('Error guardarEquipo:', err);
+      showToast('Error de conexión.');
+    }
   }
 
   /* ── TOAST ── */
