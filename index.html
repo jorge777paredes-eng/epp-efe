@@ -2432,7 +2432,7 @@
             <div class="s4-card-nombre">${s.Funcionario}</div>
             <div style="display:flex;gap:6px;align-items:center">
               <button class="btn-entregar" onclick="abrirEntrega('${s._uid}')" ${btnDisabled}>Entregar</button>
-              <button onclick="confirmarEliminar(${s.ID})" title="Eliminar solicitud"
+              <button onclick="confirmarEliminar('${s._uid}')" title="Eliminar solicitud"
                 style="background:none;border:2px solid #C8102E;border-radius:50%;width:30px;height:30px;
                        display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
                 <i class="ti ti-x" style="font-size:13px;color:#C8102E;"></i>
@@ -2461,11 +2461,14 @@
   /* ── POPUP CONFIRMAR ELIMINAR ── */
   let _idPendienteEliminar = null;
 
-  function confirmarEliminar(idRegistro) {
-    _idPendienteEliminar = idRegistro;
+  function confirmarEliminar(uid) {
+    const s = solicitudes.find(x => x._uid === uid);
+    if (!s) { showToast('No se encontró la solicitud'); return; }
+    _idPendienteEliminar = s.ID;
+    console.log('Confirmar eliminar uid:', uid, 'ID:', s.ID);
     document.getElementById('confirmOkBtn').onclick = () => {
       cerrarConfirm();
-      eliminarSolicitud(_idPendienteEliminar);
+      eliminarSolicitud(_idPendienteEliminar, uid);
     };
     document.getElementById('confirmOverlay').classList.add('open');
   }
@@ -2475,42 +2478,34 @@
     _idPendienteEliminar = null;
   }
 
-  async function eliminarSolicitud(idRegistro) {
+  async function eliminarSolicitud(idRegistro, uid) {
     showToast('Eliminando...');
-    console.log('Eliminando ID:', idRegistro);
+    console.log('Eliminando ID:', idRegistro, 'uid:', uid);
     try {
-      // Buscar la solicitud para obtener los adjuntos
-      const solicitud = solicitudes.find(s => s.ID === idRegistro);
+      const solicitud = solicitudes.find(s => s._uid === uid);
       
       // Eliminar archivos de Storage si tiene adjuntos
       if (solicitud && solicitud.DatosAdjuntos) {
         const urls = solicitud.DatosAdjuntos.split(',').filter(u => u.trim());
         for (const url of urls) {
-          // Extraer el path relativo del archivo desde la URL pública
           const match = url.match(/\/object\/public\/epp-adjuntos\/(.+)/);
           if (match) {
             const filePath = match[1];
-            await fetch(
-              `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${filePath}`,
-              {
-                method:  'DELETE',
-                headers: { ...SB_HEADERS }
-              }
+            await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${filePath}`,
+              { method: 'DELETE', headers: { ...SB_HEADERS } }
             );
-            console.log('Archivo eliminado de Storage:', filePath);
           }
         }
       }
 
-      // Eliminar registro de la tabla
+      // Eliminar registro de Supabase
       const resp = await fetch(
         `${SUPABASE_URL}/rest/v1/${TABLA_EPP}?ID=eq.${idRegistro}`,
-        {
-          method:  'DELETE',
-          headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' }
-        }
+        { method: 'DELETE', headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' } }
       );
+
       if (resp.ok || resp.status === 204) {
+        // Eliminar TODAS las filas expandidas del mismo ID original
         solicitudes = solicitudes.filter(s => s.ID !== idRegistro);
         solicitudesFiltradas = solicitudesFiltradas.filter(s => s.ID !== idRegistro);
         renderGallery();
@@ -2518,7 +2513,7 @@
       } else {
         const txt = await resp.text();
         console.error('Delete error:', resp.status, txt);
-        showToast('Error al eliminar. Intente nuevamente.');
+        showToast('Error al eliminar.');
       }
     } catch(e) {
       console.error('Delete error:', e);
