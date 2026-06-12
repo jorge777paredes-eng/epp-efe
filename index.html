@@ -2821,45 +2821,51 @@
     }
 
     const idRegistro = solicitudActual.ID;
+    console.log('=== guardarEntrega ===');
+    console.log('solicitudActual:', JSON.stringify(solicitudActual));
+    console.log('idRegistro:', idRegistro);
+
     if (!idRegistro) {
       showToast('Error: no se encontró el ID del registro');
+      console.error('ID no encontrado en solicitudActual');
       return;
     }
+
+    const fechaHoy = new Date().toLocaleDateString('es-CL', {day:'2-digit',month:'2-digit',year:'numeric'});
+    const patchUrl = `${SUPABASE_URL}/rest/v1/${TABLA_EPP}?ID=eq.${idRegistro}`;
+    const patchBody = { Estado: 'Entregado', Fecha_Entrega: fechaHoy };
+    console.log('PATCH URL:', patchUrl);
+    console.log('PATCH body:', JSON.stringify(patchBody));
 
     showToast('Guardando entrega...');
 
     try {
-      // PATCH a Supabase: actualizar Estado a Entregado
-      const resp = await fetch(
-        `${SUPABASE_URL}/rest/v1/${TABLA_EPP}?ID=eq.${idRegistro}`,
-        {
-          method: 'PATCH',
-          headers: {
-            ...SB_HEADERS,
-            'Prefer': 'return=minimal'
-          },
-          body: JSON.stringify({
-            Estado: 'Entregado',
-            Fecha_Entrega: new Date().toLocaleDateString('es-CL', {day:'2-digit',month:'2-digit',year:'numeric'})
-          })
-        }
-      );
+      const resp = await fetch(patchUrl, {
+        method: 'PATCH',
+        headers: { ...SB_HEADERS, 'Prefer': 'return=representation' },
+        body: JSON.stringify(patchBody)
+      });
+
+      const respText = await resp.text();
+      console.log('PATCH status:', resp.status, resp.statusText);
+      console.log('PATCH response:', respText);
 
       if (!resp.ok) {
-        const err = await resp.text();
-        console.error('PATCH error:', err);
-        showToast('Error al actualizar en Supabase');
+        console.error('PATCH error:', respText);
+        showToast('Error al actualizar: ' + resp.status);
         return;
       }
 
-      // Actualizar también en memoria local (todas las filas con mismo ID)
+      // Actualizar en memoria local
       solicitudes.forEach(s => {
-        if (s.ID === idRegistro) s.Estado = 'Entregado';
+        if (s.ID === idRegistro) {
+          s.Estado = 'Entregado';
+          s.Fecha_Entrega = fechaHoy;
+        }
       });
 
       document.getElementById('btnEnviarDoc').classList.add('active-btn');
       showToast('✓ Entrega guardada correctamente');
-      // Recargar galería para reflejar el cambio en Supabase
       await loadGallery();
 
     } catch (e) {
