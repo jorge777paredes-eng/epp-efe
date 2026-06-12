@@ -2820,57 +2820,42 @@
       return;
     }
 
-    const idRegistro = solicitudActual.ID;
-    console.log('=== guardarEntrega ===');
-    console.log('solicitudActual:', JSON.stringify(solicitudActual));
-    console.log('idRegistro:', idRegistro);
-
+    // Obtener ID sin importar mayúsculas/minúsculas
+    const idRegistro = solicitudActual.ID || solicitudActual.id;
     if (!idRegistro) {
-      showToast('Error: no se encontró el ID del registro');
-      console.error('ID no encontrado en solicitudActual');
+      showToast('Error: sin ID de registro');
       return;
     }
-
-    const fechaHoy = new Date().toLocaleDateString('es-CL', {day:'2-digit',month:'2-digit',year:'numeric'});
-    const patchUrl = `${SUPABASE_URL}/rest/v1/${TABLA_EPP}?ID=eq.${idRegistro}`;
-    const patchBody = { Estado: 'Entregado', Fecha_Entrega: fechaHoy };
-    console.log('PATCH URL:', patchUrl);
-    console.log('PATCH body:', JSON.stringify(patchBody));
 
     showToast('Guardando entrega...');
 
     try {
-      const resp = await fetch(patchUrl, {
-        method: 'PATCH',
-        headers: { ...SB_HEADERS, 'Prefer': 'return=representation' },
-        body: JSON.stringify(patchBody)
-      });
+      const fechaHoy = new Date().toLocaleDateString('es-CL', {day:'2-digit', month:'2-digit', year:'numeric'});
 
-      const respText = await resp.text();
-      console.log('PATCH status:', resp.status, resp.statusText);
-      console.log('PATCH response:', respText);
+      const resp = await fetch(
+        `${SUPABASE_URL}/rest/v1/${TABLA_EPP}?ID=eq.${idRegistro}`,
+        {
+          method: 'PATCH',
+          headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' },
+          body: JSON.stringify({ Estado: 'Entregado', Fecha_Entrega: fechaHoy })
+        }
+      );
 
       if (!resp.ok) {
-        console.error('PATCH error:', respText);
-        showToast('Error al actualizar: ' + resp.status);
+        const err = await resp.text();
+        showToast('Error Supabase: ' + resp.status);
+        console.error(err);
         return;
       }
 
-      // Actualizar en memoria local
-      solicitudes.forEach(s => {
-        if (s.ID === idRegistro) {
-          s.Estado = 'Entregado';
-          s.Fecha_Entrega = fechaHoy;
-        }
-      });
-
-      document.getElementById('btnEnviarDoc').classList.add('active-btn');
-      showToast('✓ Entrega guardada correctamente');
+      showToast('✓ Entrega registrada correctamente');
+      // Volver a galería y recargar desde Supabase
       await loadGallery();
+      goTo('screen4');
 
     } catch (e) {
       console.error('guardarEntrega error:', e);
-      showToast('Error de conexión al guardar');
+      showToast('Error de conexión');
     }
   }
 
