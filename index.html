@@ -563,6 +563,118 @@
     cursor: pointer;
   }
 
+
+  /* ══ SCREEN 10 — DASHBOARD ══ */
+  .s10-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: #f0f2f5;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+  }
+  .s10-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .s10-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .s10-card-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+  .s10-card-icon.azul   { background: #e8eef7; color: #1B3A6B; }
+  .s10-card-icon.verde  { background: #e6f4ea; color: #16a34a; }
+  .s10-card-icon.rojo   { background: #fde8eb; color: #C8102E; }
+  .s10-card-icon.naranja{ background: #fff3e0; color: #e65100; }
+  .s10-card-num {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1a1a1a;
+    line-height: 1;
+  }
+  .s10-card-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #888;
+    line-height: 1.3;
+  }
+  .s10-card-sub {
+    font-size: 10px;
+    color: #bbb;
+    margin-top: 2px;
+  }
+  .s10-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 2px 0;
+  }
+  .s10-download-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .s10-download-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .s10-download-row:last-child { border-bottom: none; }
+  .s10-download-info { display: flex; align-items: center; gap: 10px; }
+  .s10-download-icon {
+    width: 36px; height: 36px;
+    background: #e8eef7;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: #1B3A6B;
+  }
+  .s10-download-name { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+  .s10-download-desc { font-size: 11px; color: #888; }
+  .s10-btn-excel {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 14px;
+    background: #16a34a;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .s10-btn-excel:active { background: #15803d; }
+  .s10-loading {
+    text-align: center;
+    padding: 32px;
+    color: #bbb;
+    font-size: 13px;
+  }
+  .btn-portal.verde { background: #15803d; }
+  .btn-portal.verde:active { background: #166534; }
+
   /* ── SCREENS ── */
   .screen { display: none; flex-direction: column; height: 100%; overflow: hidden; min-height: 0; }
   .screen.active { display: flex; }
@@ -1937,6 +2049,13 @@
           <span class="btn-portal-desc">Registro de asistencia y cursos</span>
         </div>
       </button>
+      <button class="btn-portal verde" onclick="goTo('screen10');initScreen10()">
+        <div class="btn-portal-icon"><i class="ti ti-chart-bar" aria-hidden="true"></i></div>
+        <div class="btn-portal-text">
+          <span class="btn-portal-title">Dashboard / Reportes</span>
+          <span class="btn-portal-desc">Estadísticas y descarga de datos</span>
+        </div>
+      </button>
     </div>
     <div class="s0-footer"></div>
   </div>
@@ -2459,6 +2578,49 @@
       </div>
       <button class="tipo-cap-cancel" onclick="cerrarTipoCapPopup()">Cancelar</button>
     </div>
+  </div>
+
+
+  <!-- ══ SCREEN 10 — DASHBOARD ══ -->
+  <div class="screen" id="screen10">
+    <div class="screen-header">
+      <button class="btn-back" onclick="goTo('screen0')" aria-label="Volver">←</button>
+      Dashboard / Reportes
+    </div>
+    <div class="s10-body">
+      <div class="s10-section-title">Resumen general</div>
+      <div class="s10-cards" id="s10Cards">
+        <div class="s10-loading" style="grid-column:1/-1">Cargando datos...</div>
+      </div>
+      <div class="s10-section-title">Descargar datos</div>
+      <div class="s10-download-card">
+        <div class="s10-download-row">
+          <div class="s10-download-info">
+            <div class="s10-download-icon"><i class="ti ti-file-spreadsheet"></i></div>
+            <div>
+              <div class="s10-download-name">Solicitudes EPP</div>
+              <div class="s10-download-desc">BD_Solicitudes_EPP completa</div>
+            </div>
+          </div>
+          <button class="s10-btn-excel" onclick="s10Descargar('epp')">
+            <i class="ti ti-download"></i> Excel
+          </button>
+        </div>
+        <div class="s10-download-row">
+          <div class="s10-download-info">
+            <div class="s10-download-icon"><i class="ti ti-file-spreadsheet"></i></div>
+            <div>
+              <div class="s10-download-name">Capacitaciones</div>
+              <div class="s10-download-desc">BD_Capacitaciones completa</div>
+            </div>
+          </div>
+          <button class="s10-btn-excel" onclick="s10Descargar('cap')">
+            <i class="ti ti-download"></i> Excel
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="s1-footer"></div>
   </div>
 
 </div><!-- /phone-frame -->
@@ -4266,6 +4428,95 @@
     initScreen7();
     // Por ahora mismo flujo — aquí puedes diferenciar en el futuro
     showToast('Charla GOSTRA seleccionada');
+  }
+
+
+  /* ══ SCREEN 10 — DASHBOARD ══ */
+  async function initScreen10() {
+    document.getElementById('s10Cards').innerHTML =
+      '<div class="s10-loading" style="grid-column:1/-1"><i class="ti ti-loader" style="animation:spin 1s linear infinite;display:inline-block;margin-right:6px"></i>Cargando datos...</div>';
+
+    try {
+      // Cargar ambas tablas en paralelo
+      const [eppResp, capResp] = await Promise.all([
+        fetch(`${SUPABASE_URL}/rest/v1/${TABLA_EPP}?select=Estado`, { headers: SB_HEADERS }),
+        fetch(`${SUPABASE_URL}/rest/v1/${TABLA_CAP}?select=Tipo_Charla`, { headers: SB_HEADERS })
+      ]);
+
+      const eppData = await eppResp.json();
+      const capData = await capResp.json();
+
+      const pendientes  = eppData.filter(r => r.Estado === 'Pendiente').length;
+      const entregadas  = eppData.filter(r => r.Estado === 'Entregado').length;
+      const totalEpp    = eppData.length;
+      const caps        = capData.filter(r => r.Tipo_Charla !== 'Charlas GOSTRA').length;
+      const gostra      = capData.filter(r => r.Tipo_Charla === 'Charlas GOSTRA').length;
+      // Capacitaciones son únicas por fecha+título (agrupamos por combinación)
+      const uniqueCaps  = [...new Set(capData.filter(r => r.Tipo_Charla !== 'Charlas GOSTRA').map(r => r.Tipo_Charla + r.Titulo))].length;
+
+      document.getElementById('s10Cards').innerHTML = `
+        <div class="s10-card">
+          <div class="s10-card-icon azul"><i class="ti ti-clock"></i></div>
+          <div class="s10-card-num">${pendientes}</div>
+          <div class="s10-card-label">EPP Pendientes</div>
+          <div class="s10-card-sub">de ${totalEpp} solicitudes</div>
+        </div>
+        <div class="s10-card">
+          <div class="s10-card-icon verde"><i class="ti ti-package"></i></div>
+          <div class="s10-card-num">${entregadas}</div>
+          <div class="s10-card-label">EPP Entregados</div>
+          <div class="s10-card-sub">de ${totalEpp} solicitudes</div>
+        </div>
+        <div class="s10-card">
+          <div class="s10-card-icon rojo"><i class="ti ti-school"></i></div>
+          <div class="s10-card-num">${caps}</div>
+          <div class="s10-card-label">Capacitaciones</div>
+          <div class="s10-card-sub">registros totales</div>
+        </div>
+        <div class="s10-card">
+          <div class="s10-card-icon naranja"><i class="ti ti-speakerphone"></i></div>
+          <div class="s10-card-num">${gostra}</div>
+          <div class="s10-card-label">Charlas GOSTRA</div>
+          <div class="s10-card-sub">registros totales</div>
+        </div>`;
+
+    } catch(e) {
+      console.error('initScreen10 error:', e);
+      document.getElementById('s10Cards').innerHTML =
+        '<div class="s10-loading" style="grid-column:1/-1;color:#C8102E">Error al cargar datos</div>';
+    }
+  }
+
+  async function s10Descargar(tipo) {
+    const tabla = tipo === 'epp' ? TABLA_EPP : TABLA_CAP;
+    const nombre = tipo === 'epp' ? 'Solicitudes_EPP' : 'Capacitaciones';
+    showToast('Descargando...');
+    try {
+      const resp = await fetch(`${SUPABASE_URL}/rest/v1/${tabla}?select=*&order=ID.asc`, { headers: SB_HEADERS });
+      const data = await resp.json();
+      if (!data.length) { showToast('Sin datos para descargar'); return; }
+
+      // Generar CSV
+      const keys = Object.keys(data[0]).filter(k => k !== 'Firma_Alumno' && k !== 'Firma_Supervisor');
+      const csv  = [
+        keys.join(','),
+        ...data.map(row => keys.map(k => `"${(row[k]||'').toString().replace(/"/g,'""')}"`).join(','))
+      ].join('\n');
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = `${nombre}_${new Date().toLocaleDateString('es-CL').replace(/\//g,'-')}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('✓ Archivo descargado');
+    } catch(e) {
+      console.error('s10Descargar error:', e);
+      showToast('Error al descargar');
+    }
   }
 
   /* ── TOAST ── */
