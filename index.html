@@ -235,72 +235,105 @@
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 16px;
+    background: #fff;
+    padding: 0;
+  }
+  .s9-card {
+    margin: 12px 14px;
+    background: #fff;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .s9-row {
     display: flex;
-    flex-direction: column;
-    gap: 14px;
+    align-items: center;
+    padding: 11px 14px;
+    border-bottom: 1px solid #f0f0f0;
+    gap: 10px;
+    min-height: 48px;
   }
-  .s9-field { display: flex; flex-direction: column; gap: 5px; }
-  .s9-label { font-size: 12px; font-weight: 600; color: #555; }
+  .s9-row:last-child { border-bottom: none; }
+  .s9-row.tall { align-items: flex-start; padding-top: 12px; }
+  .s9-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    width: 110px;
+    flex-shrink: 0;
+    line-height: 1.3;
+  }
+  .s9-value { flex: 1; }
   .s9-input {
-    padding: 10px 12px;
-    border: 1.5px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    outline: none;
     width: 100%;
-    box-sizing: border-box;
-    background: #fff;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: #1a1a1a;
+    background: transparent;
+    padding: 0;
   }
-  .s9-input:focus { border-color: #1B3A6B; }
-  .s9-input[readonly] { background: #f5f7ff; color: #1B3A6B; font-weight: 600; }
+  .s9-input[readonly] { color: #1B3A6B; font-weight: 600; }
   .s9-select {
-    padding: 10px 12px;
-    border: 1.5px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    outline: none;
     width: 100%;
-    box-sizing: border-box;
-    background: #fff;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: #1a1a1a;
+    background: transparent;
     appearance: none;
     -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231B3A6B' stroke-width='2' fill='none'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
+    cursor: pointer;
+    padding: 0;
   }
-  .s9-hora-row { display: flex; align-items: center; gap: 8px; }
   .s9-hora-btn {
-    flex: 1;
-    padding: 10px 12px;
-    border: 1.5px solid #ddd;
-    border-radius: 8px;
+    background: none;
+    border: none;
+    padding: 0;
     font-size: 14px;
-    background: #fff;
+    color: #999;
     cursor: pointer;
     text-align: left;
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #333;
-  }
-  .s9-hora-btn i { color: #1B3A6B; font-size: 18px; }
-  .s9-hora-btn.set { border-color: #1B3A6B; color: #1B3A6B; font-weight: 600; }
-  .s9-textarea {
-    padding: 10px 12px;
-    border: 1.5px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    outline: none;
     width: 100%;
-    box-sizing: border-box;
-    resize: none;
-    height: 80px;
-    font-family: inherit;
   }
-  .s9-textarea:focus { border-color: #1B3A6B; }
+  .s9-hora-btn i { color: #1B3A6B; font-size: 17px; flex-shrink: 0; }
+  .s9-hora-btn.set { color: #1B3A6B; font-weight: 600; }
+  .s9-total {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1B3A6B;
+  }
+  .s9-textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: #1a1a1a;
+    background: transparent;
+    resize: none;
+    height: 60px;
+    font-family: inherit;
+    padding: 0;
+    line-height: 1.5;
+  }
+  .s9-divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 0 14px;
+  }
+  .s9-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 14px 6px;
+  }
   .s9-bottom {
-    padding: 10px 16px 16px;
+    padding: 10px 14px 16px;
     display: flex;
     gap: 10px;
     flex-shrink: 0;
@@ -323,12 +356,12 @@
     flex: 1;
     padding: 13px;
     background: #e5e7eb;
-    color: #555;
+    color: #aaa;
     border: none;
     border-radius: 8px;
     font-size: 13px;
     font-weight: 600;
-    cursor: pointer;
+    cursor: not-allowed;
   }
   .s9-btn-pdf.active { background: #C8102E; color: #fff; cursor: pointer; }
 
@@ -2217,47 +2250,58 @@
       Cierre de Capacitación
     </div>
     <div class="s9-body">
-      <div class="s9-field">
-        <div class="s9-label">Fecha Capacitación</div>
-        <input class="s9-input" id="s9Fecha" readonly>
-      </div>
-      <div class="s9-field">
-        <div class="s9-label">Hora Inicio</div>
-        <button class="s9-hora-btn" id="s9BtnInicio" onclick="abrirClock('inicio')">
-          <i class="ti ti-clock"></i>
-          <span id="s9TextInicio">Seleccionar hora</span>
-        </button>
-      </div>
-      <div class="s9-field">
-        <div class="s9-label">Hora Término</div>
-        <button class="s9-hora-btn" id="s9BtnTermino" onclick="abrirClock('termino')">
-          <i class="ti ti-clock"></i>
-          <span id="s9TextTermino">Seleccionar hora</span>
-        </button>
-      </div>
-      <div class="s9-field">
-        <div class="s9-label">Total Hrs Capacitación</div>
-        <input class="s9-input" id="s9Total" readonly placeholder="--:--">
-      </div>
-      <div class="s9-field">
-        <div class="s9-label">Tipo Charla</div>
-        <select class="s9-select" id="s9TipoCharla">
-          <option>Capacitacion</option>
-          <option>Charla Integral</option>
-          <option>Charla 5 Minutos</option>
-          <option>Distribución</option>
-          <option>Liderazgo Visible</option>
-          <option>Reunión</option>
-          <option>Otra</option>
-        </select>
-      </div>
-      <div class="s9-field">
-        <div class="s9-label">Título Capacitación</div>
-        <textarea class="s9-textarea" id="s9Titulo" placeholder="Escriba el título..."></textarea>
-      </div>
-      <div class="s9-field">
-        <div class="s9-label">Realiza Capacitación</div>
-        <select class="s9-select" id="s9Realiza"></select>
+      <div class="s9-section-title">Datos de la Capacitación</div>
+      <div class="s9-card">
+        <div class="s9-row">
+          <div class="s9-label">Fecha</div>
+          <div class="s9-value"><input class="s9-input" id="s9Fecha" readonly></div>
+        </div>
+        <div class="s9-row">
+          <div class="s9-label">Hora Inicio</div>
+          <div class="s9-value">
+            <button class="s9-hora-btn" id="s9BtnInicio" onclick="abrirClock('inicio')">
+              <i class="ti ti-clock"></i>
+              <span id="s9TextInicio">Toca para seleccionar</span>
+            </button>
+          </div>
+        </div>
+        <div class="s9-row">
+          <div class="s9-label">Hora Término</div>
+          <div class="s9-value">
+            <button class="s9-hora-btn" id="s9BtnTermino" onclick="abrirClock('termino')">
+              <i class="ti ti-clock"></i>
+              <span id="s9TextTermino">Toca para seleccionar</span>
+            </button>
+          </div>
+        </div>
+        <div class="s9-row">
+          <div class="s9-label">Total Hrs</div>
+          <div class="s9-value"><div class="s9-total" id="s9Total">--:--</div></div>
+        </div>
+        <div class="s9-row">
+          <div class="s9-label">Tipo Charla</div>
+          <div class="s9-value">
+            <select class="s9-select" id="s9TipoCharla">
+              <option>Capacitacion</option>
+              <option>Charla Integral</option>
+              <option>Charla 5 Minutos</option>
+              <option>Distribución</option>
+              <option>Liderazgo Visible</option>
+              <option>Reunión</option>
+              <option>Otra</option>
+            </select>
+          </div>
+        </div>
+        <div class="s9-row tall">
+          <div class="s9-label">Título</div>
+          <div class="s9-value">
+            <textarea class="s9-textarea" id="s9Titulo" placeholder="Escriba el título..."></textarea>
+          </div>
+        </div>
+        <div class="s9-row">
+          <div class="s9-label">Realiza</div>
+          <div class="s9-value"><select class="s9-select" id="s9Realiza"></select></div>
+        </div>
       </div>
     </div>
     <div class="s9-bottom">
@@ -3865,7 +3909,7 @@
     document.getElementById('s9TextTermino').textContent = 'Seleccionar hora';
     document.getElementById('s9BtnInicio').classList.remove('set');
     document.getElementById('s9BtnTermino').classList.remove('set');
-    document.getElementById('s9Total').value = '';
+    document.getElementById('s9Total').textContent = '--:--';
 
     // Reset firma supervisor
     document.getElementById('s9BtnFirma').className = 's9-btn-firma';
@@ -3943,7 +3987,7 @@
     if (diff < 0) diff += 24 * 60;
     const hh = String(Math.floor(diff / 60)).padStart(2,'0');
     const mm = String(diff % 60).padStart(2,'0');
-    document.getElementById('s9Total').value = hh + ':' + mm;
+    document.getElementById('s9Total').textContent = hh + ':' + mm;
   }
 
   /* ── FIRMA SUPERVISOR ── */
