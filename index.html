@@ -13,6 +13,8 @@
     background: #f0f2f5;
     display: flex;
     justify-content: center;
+    display: flex;
+    justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
     padding: 0;
@@ -21,12 +23,13 @@
   .phone-frame {
     width: 100%;
     max-width: 420px;
-    min-height: 100vh;
+    height: 100vh;
     background: #ffffff;
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    margin: 0 auto;
   }
 
 
@@ -237,6 +240,7 @@
     -webkit-overflow-scrolling: touch;
     background: #fff;
     padding: 0;
+    min-height: 0;
   }
   .s9-card {
     margin: 12px 14px;
@@ -443,7 +447,7 @@
   }
 
   /* ── SCREENS ── */
-  .screen { display: none; flex-direction: column; height: 100vh; overflow: hidden; }
+  .screen { display: none; flex-direction: column; height: 100vh; overflow: hidden; min-height: 0; }
   .screen.active { display: flex; }
 
   /* ══════════════════════════════
@@ -2249,6 +2253,7 @@
       <button class="btn-back" onclick="goTo('screen8')" aria-label="Volver">←</button>
       Cierre de Capacitación
     </div>
+    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;">
     <div class="s9-body">
       <div class="s9-section-title">Datos de la Capacitación</div>
       <div class="s9-card">
@@ -2303,6 +2308,7 @@
           <div class="s9-value"><select class="s9-select" id="s9Realiza"></select></div>
         </div>
       </div>
+    </div>
     </div>
     <div class="s9-bottom">
       <button class="s9-btn-firma" id="s9BtnFirma" onclick="s9AbrirFirma()">Firma Supervisor</button>
