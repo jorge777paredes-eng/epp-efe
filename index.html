@@ -2334,7 +2334,7 @@
     </div><!-- /s9-wrap -->
     <div class="s9-bottom">
       <button class="s9-btn-firma" id="s9BtnFirma" onclick="s9AbrirFirma()">Firma Supervisor</button>
-      <button class="s9-btn-pdf" id="s9BtnPdf" onclick="s9GenerarPdf()" disabled>Generar PDF</button>
+      <button class="s9-btn-pdf" id="s9BtnPdf" onclick="s9GuardarCapacitacion()" disabled>Guardar Capacitación</button>
     </div>
     <div class="s1-footer"></div>
   </div>
@@ -2832,6 +2832,7 @@
   const SUPABASE_URL = 'https://zgwupiifiqpeggytwdyu.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_Pd728Y-pURP0TIBuFaBpbQ_cL9TZ1gd';
   const TABLA_EPP    = 'BD_Solicitudes_EPP';
+  const TABLA_CAP    = 'BD_Capacitaciones';
 
   const SB_HEADERS = {
     'Content-Type':  'application/json',
@@ -3348,10 +3349,9 @@
       const btn = document.getElementById('s9BtnFirma');
       btn.className = 's9-btn-firma signed';
       btn.innerHTML = '<i class="ti ti-check" style="margin-right:5px"></i>Firmado';
-      document.getElementById('s9BtnPdf').disabled = false;
-      document.getElementById('s9BtnPdf').className = 's9-btn-pdf active';
       cerrarFirmaPopup();
       showToast('✓ Firma del supervisor registrada');
+      s9VerificarCompleto();
       return;
     }
 
@@ -3947,9 +3947,13 @@
     document.getElementById('s9BtnPdf').disabled = true;
     document.getElementById('s9BtnPdf').className = 's9-btn-pdf';
 
+    // Reset titulo y tipo
+    document.getElementById('s9Titulo').value = '';
+    document.getElementById('s9TipoCharla').selectedIndex = 0;
+
     // Cargar inspectores de línea en el select
     const sel = document.getElementById('s9Realiza');
-    sel.innerHTML = '';
+    sel.innerHTML = '<option value="" disabled selected>Seleccionar...</option>';
     funcionarios
       .filter(f => f.cargo === 'Inspector de linea')
       .sort((a, b) => a.nombre.localeCompare(b.nombre))
@@ -3959,6 +3963,12 @@
         opt.textContent = f.nombre;
         sel.appendChild(opt);
       });
+
+    // Escuchar cambios para habilitar botón guardar
+    ['s9TipoCharla','s9Titulo','s9Realiza'].forEach(id => {
+      document.getElementById(id).addEventListener('change', s9VerificarCompleto);
+      document.getElementById(id).addEventListener('input', s9VerificarCompleto);
+    });
   }
 
   /* ── CLOCK ── */
@@ -4009,6 +4019,7 @@
     }
     cerrarClock();
     s9CalcularTotal();
+    s9VerificarCompleto();
   }
 
   function s9CalcularTotal() {
@@ -4021,6 +4032,78 @@
   }
 
   /* ── FIRMA SUPERVISOR ── */
+  function s9VerificarCompleto() {
+    const tipo   = document.getElementById('s9TipoCharla').value;
+    const titulo = document.getElementById('s9Titulo').value.trim();
+    const realiza = document.getElementById('s9Realiza').value;
+    const horaOk = s9HoraInicio && s9HoraTermino;
+    const todo = tipo && titulo && realiza && horaOk && s9FirmaSuper;
+    const btn = document.getElementById('s9BtnPdf');
+    btn.disabled = !todo;
+    btn.className = todo ? 's9-btn-pdf active' : 's9-btn-pdf';
+  }
+
+  async function s9GuardarCapacitacion() {
+    const fecha   = document.getElementById('s9Fecha').value;
+    const hInicio = document.getElementById('s9TextInicio').textContent;
+    const hTermino = document.getElementById('s9TextTermino').textContent;
+    const total   = document.getElementById('s9Total').textContent;
+    const tipo    = document.getElementById('s9TipoCharla').value;
+    const titulo  = document.getElementById('s9Titulo').value.trim();
+    const realiza = document.getElementById('s9Realiza').value;
+
+    if (!tipo || !titulo || !realiza || !s9FirmaSuper) {
+      showToast('Complete todos los campos');
+      return;
+    }
+
+    showToast('Guardando capacitación...');
+    document.getElementById('s9BtnPdf').disabled = true;
+
+    // Construir una fila por cada participante
+    const filas = s8Participantes.map(p => ({
+      Funcionario:     p.nombre,
+      Rut:             funcionarios[p.idx]?.rut || '',
+      Cargo:           p.cargo,
+      Fecha:           fecha,
+      Hora_Inicio:     hInicio,
+      Hora_Termino:    hTermino,
+      Total_Horas:     total,
+      Tipo_Charla:     tipo,
+      Titulo:          titulo,
+      Realiza:         realiza,
+      Firma_Supervisor: s9FirmaSuper,
+      Firma_Alumno:    p.firmaURL || ''
+    }));
+
+    try {
+      const resp = await fetch(
+        `${SUPABASE_URL}/rest/v1/${TABLA_CAP}`,
+        {
+          method: 'POST',
+          headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' },
+          body: JSON.stringify(filas)
+        }
+      );
+
+      if (!resp.ok) {
+        const err = await resp.text();
+        console.error('POST CAP error:', err);
+        showToast('Error al guardar: ' + resp.status);
+        document.getElementById('s9BtnPdf').disabled = false;
+        return;
+      }
+
+      showToast('✓ Capacitación guardada correctamente');
+      setTimeout(() => goTo('screen0'), 1500);
+
+    } catch(e) {
+      console.error('s9GuardarCapacitacion error:', e);
+      showToast('Error de conexión');
+      document.getElementById('s9BtnPdf').disabled = false;
+    }
+  }
+
   function s9AbrirFirma() {
     if (s9FirmaSuper) return; // ya firmó
     firmaTarget = 's9_super';
