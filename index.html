@@ -8,19 +8,21 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-  html, body {
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0f2f5;
     margin: 0;
     padding: 0;
-    height: 100%;
-    background: #f0f2f5;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
   }
 
   .phone-frame {
     width: 100%;
     max-width: 420px;
     height: 100vh;
-    height: 100dvh;
     background: #ffffff;
     position: relative;
     overflow: hidden;
@@ -238,6 +240,7 @@
     background: #fff;
     padding: 0;
     min-height: 0;
+    overscroll-behavior: contain;
   }
   .s9-card {
     margin: 12px 14px;
@@ -444,7 +447,7 @@
   }
 
   /* ── SCREENS ── */
-  .screen { display: none; flex-direction: column; height: 100%; overflow: hidden; min-height: 0; }
+  .screen { display: none; flex-direction: column; height: 100vh; overflow: hidden; min-height: 0; }
   .screen.active { display: flex; }
 
   /* ══════════════════════════════
@@ -2244,13 +2247,12 @@
     <div class="s1-footer"></div>
   </div>
 
-</div>
+
   <div class="screen" id="screen9">
     <div class="screen-header">
       <button class="btn-back" onclick="goTo('screen8')" aria-label="Volver">←</button>
       Cierre de Capacitación
     </div>
-    <div style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;">
     <div class="s9-body">
       <div class="s9-section-title">Datos de la Capacitación</div>
       <div class="s9-card">
@@ -2263,7 +2265,7 @@
           <div class="s9-value">
             <button class="s9-hora-btn" id="s9BtnInicio" onclick="abrirClock('inicio')">
               <i class="ti ti-clock"></i>
-              <span id="s9TextInicio">Toca para seleccionar</span>
+              <span id="s9TextInicio">Seleccionar</span>
             </button>
           </div>
         </div>
@@ -2272,7 +2274,7 @@
           <div class="s9-value">
             <button class="s9-hora-btn" id="s9BtnTermino" onclick="abrirClock('termino')">
               <i class="ti ti-clock"></i>
-              <span id="s9TextTermino">Toca para seleccionar</span>
+              <span id="s9TextTermino">Seleccionar</span>
             </button>
           </div>
         </div>
@@ -2284,6 +2286,7 @@
           <div class="s9-label">Tipo Charla</div>
           <div class="s9-value">
             <select class="s9-select" id="s9TipoCharla">
+              <option value="" disabled selected>Seleccionar...</option>
               <option>Capacitacion</option>
               <option>Charla Integral</option>
               <option>Charla 5 Minutos</option>
@@ -2302,10 +2305,9 @@
         </div>
         <div class="s9-row">
           <div class="s9-label">Realiza</div>
-          <div class="s9-value"><select class="s9-select" id="s9Realiza"></select></div>
+          <div class="s9-value"><select class="s9-select" id="s9Realiza"><option value="" disabled selected>Seleccionar...</option></select></div>
         </div>
       </div>
-    </div>
     </div>
     <div class="s9-bottom">
       <button class="s9-btn-firma" id="s9BtnFirma" onclick="s9AbrirFirma()">Firma Supervisor</button>
@@ -2313,6 +2315,8 @@
     </div>
     <div class="s1-footer"></div>
   </div>
+
+</div><!-- /phone-frame -->
 
   <!-- ══ CLOCK POPUP ══ -->
   <div class="clock-overlay" id="clockOverlay">
