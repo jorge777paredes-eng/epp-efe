@@ -229,6 +229,186 @@
     cursor: pointer;
   }
 
+
+  /* ══ SCREEN 9 — CIERRE CAPACITACIÓN ══ */
+  .s9-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .s9-field { display: flex; flex-direction: column; gap: 5px; }
+  .s9-label { font-size: 12px; font-weight: 600; color: #555; }
+  .s9-input {
+    padding: 10px 12px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    background: #fff;
+  }
+  .s9-input:focus { border-color: #1B3A6B; }
+  .s9-input[readonly] { background: #f5f7ff; color: #1B3A6B; font-weight: 600; }
+  .s9-select {
+    padding: 10px 12px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    background: #fff;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231B3A6B' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+  }
+  .s9-hora-row { display: flex; align-items: center; gap: 8px; }
+  .s9-hora-btn {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #fff;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #333;
+  }
+  .s9-hora-btn i { color: #1B3A6B; font-size: 18px; }
+  .s9-hora-btn.set { border-color: #1B3A6B; color: #1B3A6B; font-weight: 600; }
+  .s9-textarea {
+    padding: 10px 12px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    resize: none;
+    height: 80px;
+    font-family: inherit;
+  }
+  .s9-textarea:focus { border-color: #1B3A6B; }
+  .s9-bottom {
+    padding: 10px 16px 16px;
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+    background: #fff;
+    border-top: 1px solid #f0f0f0;
+  }
+  .s9-btn-firma {
+    flex: 1;
+    padding: 13px;
+    background: #1B3A6B;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .s9-btn-firma.signed { background: #16a34a; }
+  .s9-btn-pdf {
+    flex: 1;
+    padding: 13px;
+    background: #e5e7eb;
+    color: #555;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .s9-btn-pdf.active { background: #C8102E; color: #fff; cursor: pointer; }
+
+  /* ══ CLOCK POPUP ══ */
+  .clock-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+  }
+  .clock-overlay.open { display: flex; }
+  .clock-popup {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    width: 280px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  }
+  .clock-title {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1B3A6B;
+    margin-bottom: 16px;
+  }
+  .clock-display {
+    text-align: center;
+    font-size: 48px;
+    font-weight: 700;
+    color: #1B3A6B;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    font-variant-numeric: tabular-nums;
+  }
+  .clock-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .clock-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .clock-sep { font-size: 32px; font-weight: 700; color: #1B3A6B; margin-bottom: 8px; }
+  .clock-arrow {
+    width: 40px; height: 36px;
+    background: #f0f4ff;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    color: #1B3A6B;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .clock-arrow:active { background: #1B3A6B; color: #fff; }
+  .clock-val {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1B3A6B;
+    width: 56px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .clock-btn-row { display: flex; gap: 10px; }
+  .clock-btn-cancel {
+    flex: 1; padding: 11px;
+    border: 1.5px solid #ddd;
+    background: #fff; color: #555;
+    border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .clock-btn-ok {
+    flex: 2; padding: 11px;
+    background: #1B3A6B; color: #fff;
+    border: none; border-radius: 8px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+
   /* ── SCREENS ── */
   .screen { display: none; flex-direction: column; height: 100vh; overflow: hidden; }
   .screen.active { display: flex; }
@@ -2024,13 +2204,93 @@
       <div class="s8-list" id="s8List"></div>
       <div class="s8-bottom">
         <button class="s8-btn-agregar" onclick="goTo('screen7')">Seleccionar Alumnos</button>
-        <button class="s8-btn-cerrar" onclick="goTo('screen0')">Cerrar Capacitación</button>
+        <button class="s8-btn-cerrar" id="s8BtnCerrar" onclick="goTo('screen9');initScreen9()" disabled>Cerrar Capacitación</button>
       </div>
     </div>
     <div class="s1-footer"></div>
   </div>
 
 </div>
+  <div class="screen" id="screen9">
+    <div class="screen-header">
+      <button class="btn-back" onclick="goTo('screen8')" aria-label="Volver">←</button>
+      Cierre de Capacitación
+    </div>
+    <div class="s9-body">
+      <div class="s9-field">
+        <div class="s9-label">Fecha Capacitación</div>
+        <input class="s9-input" id="s9Fecha" readonly>
+      </div>
+      <div class="s9-field">
+        <div class="s9-label">Hora Inicio</div>
+        <button class="s9-hora-btn" id="s9BtnInicio" onclick="abrirClock('inicio')">
+          <i class="ti ti-clock"></i>
+          <span id="s9TextInicio">Seleccionar hora</span>
+        </button>
+      </div>
+      <div class="s9-field">
+        <div class="s9-label">Hora Término</div>
+        <button class="s9-hora-btn" id="s9BtnTermino" onclick="abrirClock('termino')">
+          <i class="ti ti-clock"></i>
+          <span id="s9TextTermino">Seleccionar hora</span>
+        </button>
+      </div>
+      <div class="s9-field">
+        <div class="s9-label">Total Hrs Capacitación</div>
+        <input class="s9-input" id="s9Total" readonly placeholder="--:--">
+      </div>
+      <div class="s9-field">
+        <div class="s9-label">Tipo Charla</div>
+        <select class="s9-select" id="s9TipoCharla">
+          <option>Capacitacion</option>
+          <option>Charla Integral</option>
+          <option>Charla 5 Minutos</option>
+          <option>Distribución</option>
+          <option>Liderazgo Visible</option>
+          <option>Reunión</option>
+          <option>Otra</option>
+        </select>
+      </div>
+      <div class="s9-field">
+        <div class="s9-label">Título Capacitación</div>
+        <textarea class="s9-textarea" id="s9Titulo" placeholder="Escriba el título..."></textarea>
+      </div>
+      <div class="s9-field">
+        <div class="s9-label">Realiza Capacitación</div>
+        <select class="s9-select" id="s9Realiza"></select>
+      </div>
+    </div>
+    <div class="s9-bottom">
+      <button class="s9-btn-firma" id="s9BtnFirma" onclick="s9AbrirFirma()">Firma Supervisor</button>
+      <button class="s9-btn-pdf" id="s9BtnPdf" onclick="s9GenerarPdf()" disabled>Generar PDF</button>
+    </div>
+    <div class="s1-footer"></div>
+  </div>
+
+  <!-- ══ CLOCK POPUP ══ -->
+  <div class="clock-overlay" id="clockOverlay">
+    <div class="clock-popup">
+      <div class="clock-title" id="clockTitle">Seleccionar Hora</div>
+      <div class="clock-display" id="clockDisplay">00:00</div>
+      <div class="clock-controls">
+        <div class="clock-col">
+          <button class="clock-arrow" onclick="clockChange('h',1)">▲</button>
+          <div class="clock-val" id="clockH">00</div>
+          <button class="clock-arrow" onclick="clockChange('h',-1)">▼</button>
+        </div>
+        <div class="clock-sep">:</div>
+        <div class="clock-col">
+          <button class="clock-arrow" onclick="clockChange('m',1)">▲</button>
+          <div class="clock-val" id="clockM">00</div>
+          <button class="clock-arrow" onclick="clockChange('m',-1)">▼</button>
+        </div>
+      </div>
+      <div class="clock-btn-row">
+        <button class="clock-btn-cancel" onclick="cerrarClock()">Cancelar</button>
+        <button class="clock-btn-ok" onclick="confirmarClock()">Confirmar</button>
+      </div>
+    </div>
+  </div>
 
 <!-- ══ POPUP FIRMA ══ -->
 <!-- ══ POPUP CONFIRMAR ELIMINAR ══ -->
@@ -3000,6 +3260,27 @@
     }
     const dataURL = document.getElementById('canvasFirmaPopup').toDataURL('image/png');
 
+    if (typeof firmaTarget === 'number') {
+      s8Participantes[firmaTarget].firmado  = true;
+      s8Participantes[firmaTarget].firmaURL = dataURL;
+      s8RenderList();
+      cerrarFirmaPopup();
+      showToast('✓ Firma registrada');
+      return;
+    }
+
+    if (firmaTarget === 's9_super') {
+      s9FirmaSuper = dataURL;
+      const btn = document.getElementById('s9BtnFirma');
+      btn.className = 's9-btn-firma signed';
+      btn.innerHTML = '<i class="ti ti-check" style="margin-right:5px"></i>Firmado';
+      document.getElementById('s9BtnPdf').disabled = false;
+      document.getElementById('s9BtnPdf').className = 's9-btn-pdf active';
+      cerrarFirmaPopup();
+      showToast('✓ Firma del supervisor registrada');
+      return;
+    }
+
     if (firmaTarget === 's6_entrega') {
       s6FirmaEntrega = dataURL;
       document.getElementById('s6ImgFirmaEntrega').src = dataURL;
@@ -3514,24 +3795,43 @@
     const list = document.getElementById('s8List');
     if (s8Participantes.length === 0) {
       list.innerHTML = '<div class="s7-no-results">Sin participantes</div>';
+      s8ActualizarBtnCerrar();
       return;
     }
     list.innerHTML = s8Participantes.map((p, i) => `
       <div class="s8-item">
         <div class="s8-nombre">${p.nombre}</div>
-        <button class="s8-btn-firmar ${p.firmado ? 'firmado' : ''}" onclick="s8Firmar(${i})">
-          ${p.firmado ? '✓ Firmado' : 'Firmar'}
+        <button class="s8-btn-firmar ${p.firmado ? 'firmado' : ''}"
+          onclick="s8Firmar(${i})"
+          ${p.firmado ? 'disabled style="cursor:default;"' : ''}>
+          ${p.firmado ? '<i class="ti ti-check" style="margin-right:4px"></i>Firmado' : 'Firmar'}
         </button>
-        <button class="s8-btn-eliminar" onclick="s8Eliminar(${i})" title="Eliminar">
+        <button class="s8-btn-eliminar" onclick="s8Eliminar(${i})" title="Eliminar"
+          ${p.firmado ? 'style="opacity:0.3;pointer-events:none"' : ''}>
           <i class="ti ti-trash"></i>
         </button>
       </div>
     `).join('');
+    s8ActualizarBtnCerrar();
+  }
+
+  function s8ActualizarBtnCerrar() {
+    const btn = document.getElementById('s8BtnCerrar');
+    if (!btn) return;
+    const todosFirmaron = s8Participantes.length > 0 &&
+      s8Participantes.every(p => p.firmado);
+    btn.disabled = !todosFirmaron;
+    btn.style.background = todosFirmaron ? '#1B3A6B' : '';
+    btn.style.color = todosFirmaron ? '#fff' : '';
   }
 
   function s8Firmar(i) {
-    s8Participantes[i].firmado = !s8Participantes[i].firmado;
-    s8RenderList();
+    if (s8Participantes[i].firmado) return;
+    firmaTarget = i;
+    document.getElementById('firmaPopupTitle').textContent =
+      'Firma — ' + s8Participantes[i].nombre.split(' ').slice(0,2).join(' ');
+    document.getElementById('firmaOverlay').classList.add('open');
+    setTimeout(() => initPopupCanvas(), 80);
   }
 
   function s8Eliminar(i) {
@@ -3540,6 +3840,119 @@
     s8Participantes.splice(i, 1);
     s8RenderList();
     s7ActualizarContador();
+  }
+
+
+  /* ══ SCREEN 9 — CIERRE CAPACITACIÓN ══ */
+  let s9HoraInicio  = null; // {h, m}
+  let s9HoraTermino = null;
+  let s9FirmaSuper  = null;
+  let clockTarget   = null; // 'inicio' | 'termino'
+  let clockH = 0, clockM = 0;
+
+  function initScreen9() {
+    s9HoraInicio  = null;
+    s9HoraTermino = null;
+    s9FirmaSuper  = null;
+
+    // Fecha de hoy
+    const hoy = new Date();
+    document.getElementById('s9Fecha').value =
+      hoy.toLocaleDateString('es-CL', {day:'numeric', month:'long', year:'numeric'});
+
+    // Reset horas
+    document.getElementById('s9TextInicio').textContent  = 'Seleccionar hora';
+    document.getElementById('s9TextTermino').textContent = 'Seleccionar hora';
+    document.getElementById('s9BtnInicio').classList.remove('set');
+    document.getElementById('s9BtnTermino').classList.remove('set');
+    document.getElementById('s9Total').value = '';
+
+    // Reset firma supervisor
+    document.getElementById('s9BtnFirma').className = 's9-btn-firma';
+    document.getElementById('s9BtnFirma').textContent = 'Firma Supervisor';
+    document.getElementById('s9BtnPdf').disabled = true;
+    document.getElementById('s9BtnPdf').className = 's9-btn-pdf';
+
+    // Cargar inspectores de línea en el select
+    const sel = document.getElementById('s9Realiza');
+    sel.innerHTML = '';
+    funcionarios
+      .filter(f => f.cargo === 'Inspector de linea')
+      .sort((a, b) => a.nombre.localeCompare(b.nombre))
+      .forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f.nombre;
+        opt.textContent = f.nombre;
+        sel.appendChild(opt);
+      });
+  }
+
+  /* ── CLOCK ── */
+  function abrirClock(target) {
+    clockTarget = target;
+    const hora = target === 'inicio' ? s9HoraInicio : s9HoraTermino;
+    clockH = hora ? hora.h : 8;
+    clockM = hora ? hora.m : 0;
+    document.getElementById('clockTitle').textContent =
+      target === 'inicio' ? 'Hora Inicio' : 'Hora Término';
+    actualizarClock();
+    document.getElementById('clockOverlay').classList.add('open');
+  }
+
+  function cerrarClock() {
+    document.getElementById('clockOverlay').classList.remove('open');
+  }
+
+  function clockChange(unit, delta) {
+    if (unit === 'h') {
+      clockH = (clockH + delta + 24) % 24;
+    } else {
+      clockM = (clockM + delta + 60) % 60;
+    }
+    actualizarClock();
+  }
+
+  function actualizarClock() {
+    const hStr = String(clockH).padStart(2,'0');
+    const mStr = String(clockM).padStart(2,'0');
+    document.getElementById('clockH').textContent = hStr;
+    document.getElementById('clockM').textContent = mStr;
+    document.getElementById('clockDisplay').textContent = hStr + ':' + mStr;
+  }
+
+  function confirmarClock() {
+    const hStr = String(clockH).padStart(2,'0');
+    const mStr = String(clockM).padStart(2,'0');
+    const texto = hStr + ':' + mStr;
+    if (clockTarget === 'inicio') {
+      s9HoraInicio = { h: clockH, m: clockM };
+      document.getElementById('s9TextInicio').textContent = texto;
+      document.getElementById('s9BtnInicio').classList.add('set');
+    } else {
+      s9HoraTermino = { h: clockH, m: clockM };
+      document.getElementById('s9TextTermino').textContent = texto;
+      document.getElementById('s9BtnTermino').classList.add('set');
+    }
+    cerrarClock();
+    s9CalcularTotal();
+  }
+
+  function s9CalcularTotal() {
+    if (!s9HoraInicio || !s9HoraTermino) return;
+    let diff = (s9HoraTermino.h * 60 + s9HoraTermino.m) - (s9HoraInicio.h * 60 + s9HoraInicio.m);
+    if (diff < 0) diff += 24 * 60;
+    const hh = String(Math.floor(diff / 60)).padStart(2,'0');
+    const mm = String(diff % 60).padStart(2,'0');
+    document.getElementById('s9Total').value = hh + ':' + mm;
+  }
+
+  /* ── FIRMA SUPERVISOR ── */
+  function s9AbrirFirma() {
+    if (s9FirmaSuper) return; // ya firmó
+    firmaTarget = 's9_super';
+    document.getElementById('firmaPopupTitle').textContent = 'Firma Supervisor';
+    document.getElementById('firmaOverlay').classList.add('open');
+    setTimeout(() => initPopupCanvas(), 80);
   }
 
   /* ── TOAST ── */
