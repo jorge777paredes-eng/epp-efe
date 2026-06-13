@@ -675,6 +675,68 @@
   .btn-portal.verde { background: #15803d; }
   .btn-portal.verde:active { background: #166534; }
 
+
+  .s10-horas-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .s10-horas-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1B3A6B;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .s10-horas-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: 1px solid #f0f0f0;
+    gap: 8px;
+  }
+  .s10-horas-row:last-child { border-bottom: none; }
+  .s10-horas-semana {
+    font-size: 12px;
+    color: #555;
+    font-weight: 500;
+    flex: 1;
+  }
+  .s10-horas-val {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1B3A6B;
+    background: #e8eef7;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .s10-horas-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 2px solid #1B3A6B;
+  }
+  .s10-horas-total-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1B3A6B;
+  }
+  .s10-horas-total-val {
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    background: #1B3A6B;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
   /* ── SCREENS ── */
   .screen { display: none; flex-direction: column; height: 100%; overflow: hidden; min-height: 0; }
   .screen.active { display: flex; }
@@ -2592,6 +2654,10 @@
       <div class="s10-cards" id="s10Cards">
         <div class="s10-loading" style="grid-column:1/-1">Cargando datos...</div>
       </div>
+      <div class="s10-section-title">Horas de capacitación por semana</div>
+      <div class="s10-horas-card" id="s10HorasCard">
+        <div class="s10-loading">Cargando...</div>
+      </div>
       <div class="s10-section-title">Descargar datos</div>
       <div class="s10-download-card">
         <div class="s10-download-row">
@@ -4437,23 +4503,60 @@
       '<div class="s10-loading" style="grid-column:1/-1"><i class="ti ti-loader" style="animation:spin 1s linear infinite;display:inline-block;margin-right:6px"></i>Cargando datos...</div>';
 
     try {
-      // Cargar ambas tablas en paralelo
+      // Cargar ambas tablas en paralelo — cap trae Total_Horas también
       const [eppResp, capResp] = await Promise.all([
         fetch(`${SUPABASE_URL}/rest/v1/${TABLA_EPP}?select=Estado`, { headers: SB_HEADERS }),
-        fetch(`${SUPABASE_URL}/rest/v1/${TABLA_CAP}?select=Tipo_Charla`, { headers: SB_HEADERS })
+        fetch(`${SUPABASE_URL}/rest/v1/${TABLA_CAP}?select=Tipo_Charla,Total_Horas`, { headers: SB_HEADERS })
       ]);
 
       const eppData = await eppResp.json();
       const capData = await capResp.json();
 
-      const pendientes  = eppData.filter(r => r.Estado === 'Pendiente').length;
-      const entregadas  = eppData.filter(r => r.Estado === 'Entregado').length;
-      const totalEpp    = eppData.length;
-      const caps        = capData.filter(r => r.Tipo_Charla !== 'Charlas GOSTRA').length;
-      const gostra      = capData.filter(r => r.Tipo_Charla === 'Charlas GOSTRA').length;
-      // Capacitaciones son únicas por fecha+título (agrupamos por combinación)
-      const uniqueCaps  = [...new Set(capData.filter(r => r.Tipo_Charla !== 'Charlas GOSTRA').map(r => r.Tipo_Charla + r.Titulo))].length;
+      console.log('EPP data:', eppData.length, eppData[0]);
+      console.log('CAP data:', capData.length, capData[0]);
 
+      const pendientes = Array.isArray(eppData) ? eppData.filter(r => r.Estado === 'Pendiente').length : 0;
+      const entregadas = Array.isArray(eppData) ? eppData.filter(r => r.Estado === 'Entregado').length : 0;
+      const totalEpp   = Array.isArray(eppData) ? eppData.length : 0;
+      const caps       = Array.isArray(capData) ? capData.filter(r => r.Tipo_Charla !== 'Charlas GOSTRA').length : 0;
+      const gostra     = Array.isArray(capData) ? capData.filter(r => r.Tipo_Charla === 'Charlas GOSTRA').length : 0;
+
+      // Calcular horas por semana
+      const semanasMap = {};
+      let totalMinutosGlobal = 0;
+
+      if (Array.isArray(capData)) {
+        capData.forEach(r => {
+          if (!r.Fecha || !r.Total_Horas || !r.Total_Horas.includes(':')) return;
+          // Parsear fecha DD-MM-YYYY
+          const partes = r.Fecha.split('-');
+          if (partes.length < 3) return;
+          const fecha = new Date(partes[2], partes[1]-1, partes[0]);
+          if (isNaN(fecha)) return;
+
+          // Calcular inicio de semana (lunes)
+          const dia = fecha.getDay(); // 0=dom, 1=lun...
+          const diff = (dia === 0) ? -6 : 1 - dia;
+          const lunes = new Date(fecha);
+          lunes.setDate(fecha.getDate() + diff);
+          const domingo = new Date(lunes);
+          domingo.setDate(lunes.getDate() + 6);
+
+          const fmt = d => `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+          const key = lunes.getTime();
+          const label = `${fmt(lunes)} – ${fmt(domingo)} ${domingo.getFullYear()}`;
+
+          const [hh, mm] = r.Total_Horas.split(':').map(Number);
+          const mins = (hh * 60) + mm;
+          semanasMap[key] = semanasMap[key] || { label, mins: 0 };
+          semanasMap[key].mins += mins;
+          totalMinutosGlobal += mins;
+        });
+      }
+
+      const totalHorasStr = `${Math.floor(totalMinutosGlobal/60)}h ${totalMinutosGlobal%60}m`;
+
+      // Render tarjetas
       document.getElementById('s10Cards').innerHTML = `
         <div class="s10-card">
           <div class="s10-card-icon azul"><i class="ti ti-clock"></i></div>
@@ -4480,6 +4583,25 @@
           <div class="s10-card-sub">registros totales</div>
         </div>`;
 
+      // Render tabla de horas por semana
+      const semanas = Object.keys(semanasMap).sort().map(k => semanasMap[k]);
+      const horasHTML = semanas.length === 0
+        ? '<div class="s10-loading">Sin datos de horas</div>'
+        : semanas.map(s => {
+            const hStr = `${Math.floor(s.mins/60)}h ${s.mins%60}m`;
+            return `<div class="s10-horas-row">
+              <div class="s10-horas-semana">Semana ${s.label}</div>
+              <div class="s10-horas-val">${hStr}</div>
+            </div>`;
+          }).join('') + `
+          <div class="s10-horas-total-row">
+            <div class="s10-horas-total-label">Total general</div>
+            <div class="s10-horas-total-val">${totalHorasStr}</div>
+          </div>`;
+
+      document.getElementById('s10HorasCard').innerHTML =
+        `<div class="s10-horas-title"><i class="ti ti-calendar-stats"></i> Horas por semana</div>` + horasHTML;
+
     } catch(e) {
       console.error('initScreen10 error:', e);
       document.getElementById('s10Cards').innerHTML =
@@ -4492,8 +4614,10 @@
     const nombre = tipo === 'epp' ? 'Solicitudes_EPP' : 'Capacitaciones';
     showToast('Descargando...');
     try {
-      // Sin order para evitar problemas con nombre del campo ID
-      const resp = await fetch(`${SUPABASE_URL}/rest/v1/${tabla}?select=*`, { headers: SB_HEADERS });
+      // Traer todos los registros con header Range
+      const resp = await fetch(`${SUPABASE_URL}/rest/v1/${tabla}?select=*`, {
+        headers: { ...SB_HEADERS, 'Range': '0-9999', 'Prefer': 'count=none' }
+      });
 
       if (!resp.ok) {
         const err = await resp.text();
