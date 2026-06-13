@@ -29,6 +29,133 @@
     flex-direction: column;
   }
 
+
+  /* ══════════════════════════════
+     SCREEN 7 — CHARLAS Y CAPACITACIONES
+  ══════════════════════════════ */
+  .s7-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 12px;
+    overflow: hidden;
+  }
+  .s7-search-wrap {
+    position: relative;
+  }
+  .s7-search-wrap i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 18px;
+  }
+  .s7-search {
+    width: 100%;
+    padding: 10px 12px 10px 38px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+  }
+  .s7-search:focus { border-color: #1B3A6B; }
+  .s7-counter {
+    font-size: 12px;
+    color: #1B3A6B;
+    font-weight: 600;
+    padding: 0 4px;
+  }
+  .s7-list {
+    flex: 1;
+    overflow-y: auto;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+  }
+  .s7-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .s7-item:last-child { border-bottom: none; }
+  .s7-item:active { background: #f5f7ff; }
+  .s7-item.selected { background: #eef2ff; }
+  .s7-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .s7-item.selected .s7-checkbox {
+    background: #1B3A6B;
+    border-color: #1B3A6B;
+  }
+  .s7-item.selected .s7-checkbox::after {
+    content: '✓';
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .s7-nombre {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1a1a1a;
+    flex: 1;
+  }
+  .s7-cargo {
+    font-size: 11px;
+    color: #888;
+  }
+  .s7-no-results {
+    padding: 32px;
+    text-align: center;
+    color: #aaa;
+    font-size: 13px;
+  }
+  .s7-footer {
+    display: flex;
+    gap: 10px;
+    padding: 4px 0 8px;
+  }
+  .s7-btn-limpiar {
+    flex: 1;
+    padding: 13px;
+    border: 1.5px solid #1B3A6B;
+    background: #fff;
+    color: #1B3A6B;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .s7-btn-confirmar {
+    flex: 2;
+    padding: 13px;
+    background: #1B3A6B;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .s7-btn-confirmar:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+
   /* ── SCREENS ── */
   .screen { display: none; flex-direction: column; min-height: 100vh; }
   .screen.active { display: flex; }
@@ -1396,7 +1523,7 @@
           <span class="btn-portal-desc">Solicitud, entrega e inspección</span>
         </div>
       </button>
-      <button class="btn-portal charlas" onclick="goTo('screen7')">
+      <button class="btn-portal charlas" onclick="goTo('screen7');initScreen7()">
         <div class="btn-portal-icon"><i class="ti ti-presentation" aria-hidden="true"></i></div>
         <div class="btn-portal-text">
           <span class="btn-portal-title">Charlas y Capacitaciones</span>
@@ -1797,11 +1924,17 @@
       <button class="btn-back" onclick="goTo('screen0')" aria-label="Volver">←</button>
       Charlas y Capacitaciones
     </div>
-    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 36px;gap:20px;">
-      <i class="ti ti-tools" style="font-size:56px;color:#ddd;"></i>
-      <div style="text-align:center;font-size:16px;font-weight:600;color:#1B3A6B;">Módulo en desarrollo</div>
-      <div style="text-align:center;font-size:13px;color:#888;line-height:1.6;">Este módulo estará disponible próximamente.<br>Aquí podrás registrar asistencia a charlas y capacitaciones.</div>
-      <button class="btn-main" style="margin-top:12px;" onclick="goTo('screen0')">← Volver al inicio</button>
+    <div class="s7-body">
+      <div class="s7-search-wrap">
+        <i class="ti ti-search"></i>
+        <input class="s7-search" id="s7SearchInput" type="text" placeholder="Buscar funcionario..." oninput="s7Filtrar()">
+      </div>
+      <div class="s7-counter" id="s7Counter">0 seleccionados</div>
+      <div class="s7-list" id="s7List"></div>
+      <div class="s7-footer">
+        <button class="s7-btn-limpiar" onclick="s7Limpiar()">Limpiar</button>
+        <button class="s7-btn-confirmar" id="s7BtnConfirmar" onclick="s7Confirmar()" disabled>Confirmar selección</button>
+      </div>
     </div>
     <div class="s1-footer"></div>
   </div>
@@ -3207,6 +3340,79 @@
       console.error('Error guardarEquipo:', err);
       showToast('Error de conexión.');
     }
+  }
+
+
+  /* ══════════════════════════════
+     SCREEN 7 — CHARLAS Y CAPACITACIONES
+  ══════════════════════════════ */
+  let s7Seleccionados = new Set(); // índices seleccionados
+  let s7FiltroActual = '';
+
+  function initScreen7() {
+    s7Seleccionados.clear();
+    document.getElementById('s7SearchInput').value = '';
+    s7FiltroActual = '';
+    s7RenderList();
+    s7ActualizarContador();
+  }
+
+  function s7Filtrar() {
+    s7FiltroActual = document.getElementById('s7SearchInput').value.toLowerCase().trim();
+    s7RenderList();
+  }
+
+  function s7RenderList() {
+    const list = document.getElementById('s7List');
+    const filtered = funcionarios
+      .map((f, idx) => ({ f, idx }))
+      .filter(({ f }) => !s7FiltroActual || f.nombre.toLowerCase().includes(s7FiltroActual));
+
+    if (filtered.length === 0) {
+      list.innerHTML = '<div class="s7-no-results">No se encontraron funcionarios</div>';
+      return;
+    }
+
+    list.innerHTML = filtered.map(({ f, idx }) => `
+      <div class="s7-item ${s7Seleccionados.has(idx) ? 'selected' : ''}" onclick="s7Toggle(${idx})">
+        <div class="s7-checkbox"></div>
+        <div>
+          <div class="s7-nombre">${f.nombre}</div>
+          <div class="s7-cargo">${f.cargo}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function s7Toggle(idx) {
+    if (s7Seleccionados.has(idx)) {
+      s7Seleccionados.delete(idx);
+    } else {
+      s7Seleccionados.add(idx);
+    }
+    s7RenderList();
+    s7ActualizarContador();
+  }
+
+  function s7ActualizarContador() {
+    const n = s7Seleccionados.size;
+    document.getElementById('s7Counter').textContent = n === 0 ? 'Ningún funcionario seleccionado' : `${n} funcionario${n > 1 ? 's' : ''} seleccionado${n > 1 ? 's' : ''}`;
+    document.getElementById('s7BtnConfirmar').disabled = n === 0;
+  }
+
+  function s7Limpiar() {
+    s7Seleccionados.clear();
+    document.getElementById('s7SearchInput').value = '';
+    s7FiltroActual = '';
+    s7RenderList();
+    s7ActualizarContador();
+  }
+
+  function s7Confirmar() {
+    const seleccionados = [...s7Seleccionados].map(idx => funcionarios[idx]);
+    console.log('Funcionarios seleccionados:', seleccionados);
+    showToast(`${seleccionados.length} funcionario${seleccionados.length > 1 ? 's' : ''} confirmado${seleccionados.length > 1 ? 's' : ''}`);
+    // Aquí irá la lógica de guardar en Supabase cuando lo definas
   }
 
   /* ── TOAST ── */
