@@ -4828,13 +4828,13 @@
     body.innerHTML = '<div class="s10-loading"><i class="ti ti-loader" style="animation:spin 1s linear infinite;display:inline-block;margin-right:6px"></i>Cargando estados...</div>';
 
     try {
-      // Consultar BD_GOSTRA para obtener estado real de cada documento
-      const nombres = s11Funcionarios.map(f => `Funcionario=eq.${encodeURIComponent(f.nombre)}`).join(',');
-      const resp = await fetch(
-        `${SUPABASE_URL}/rest/v1/${TABLA_GOSTRA}?select=Funcionario,Documento_GOSTRA,Estado,Firma,Fecha&or=(${nombres})`,
-        { headers: { ...SB_HEADERS, 'Range': '0-9999' } }
-      );
+      // Consultar BD_GOSTRA usando in() para múltiples funcionarios
+      const nombresIn = s11Funcionarios.map(f => f.nombre).join(',');
+      const url = `${SUPABASE_URL}/rest/v1/${TABLA_GOSTRA}?select=Funcionario,Documento_GOSTRA,Estado,Firma,Fecha&Funcionario=in.(${encodeURIComponent(nombresIn)})`;
+      console.log('GOSTRA query URL:', url);
+      const resp = await fetch(url, { headers: { ...SB_HEADERS, 'Range': '0-9999' } });
       const registros = resp.ok ? await resp.json() : [];
+      console.log('GOSTRA registros:', registros.length, registros[0]);
 
       // Mapear estado real a s11Funcionarios
       s11Funcionarios.forEach(f => {
