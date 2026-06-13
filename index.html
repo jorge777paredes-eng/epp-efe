@@ -23,6 +23,7 @@
     width: 100%;
     max-width: 420px;
     height: 100vh;
+    height: 100dvh;
     background: #ffffff;
     position: relative;
     overflow: hidden;
@@ -328,6 +329,26 @@
     background: #e5e7eb;
     margin: 0 14px;
   }
+  .s9-select-blue {
+    background: #1B3A6B;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='white' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+    padding-right: 28px;
+  }
+  .s9-select-blue option { background: #fff; color: #1a1a1a; }
+
   .s9-section-title {
     font-size: 11px;
     font-weight: 700;
@@ -447,7 +468,7 @@
   }
 
   /* ── SCREENS ── */
-  .screen { display: none; flex-direction: column; height: 100vh; overflow: hidden; min-height: 0; }
+  .screen { display: none; flex-direction: column; height: 100%; overflow: hidden; min-height: 0; }
   .screen.active { display: flex; }
 
   /* ══════════════════════════════
@@ -2253,6 +2274,7 @@
       <button class="btn-back" onclick="goTo('screen8')" aria-label="Volver">←</button>
       Cierre de Capacitación
     </div>
+    <div style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;">
     <div class="s9-body">
       <div class="s9-section-title">Datos de la Capacitación</div>
       <div class="s9-card">
@@ -2285,7 +2307,7 @@
         <div class="s9-row">
           <div class="s9-label">Tipo Charla</div>
           <div class="s9-value">
-            <select class="s9-select" id="s9TipoCharla">
+            <select class="s9-select-blue" id="s9TipoCharla">
               <option value="" disabled selected>Seleccionar...</option>
               <option>Capacitacion</option>
               <option>Charla Integral</option>
@@ -2305,10 +2327,11 @@
         </div>
         <div class="s9-row">
           <div class="s9-label">Realiza</div>
-          <div class="s9-value"><select class="s9-select" id="s9Realiza"><option value="" disabled selected>Seleccionar...</option></select></div>
+          <div class="s9-value"><select class="s9-select-blue" id="s9Realiza"><option value="" disabled selected>Seleccionar...</option></select></div>
         </div>
       </div>
     </div>
+    </div><!-- /s9-wrap -->
     <div class="s9-bottom">
       <button class="s9-btn-firma" id="s9BtnFirma" onclick="s9AbrirFirma()">Firma Supervisor</button>
       <button class="s9-btn-pdf" id="s9BtnPdf" onclick="s9GenerarPdf()" disabled>Generar PDF</button>
