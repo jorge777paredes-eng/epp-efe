@@ -468,6 +468,102 @@
     font-size: 13px; font-weight: 600; cursor: pointer;
   }
 
+
+  /* ══ POPUP TIPO CAPACITACIÓN ══ */
+  .tipo-cap-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 400;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .tipo-cap-overlay.open { display: flex; }
+  .tipo-cap-popup {
+    background: #fff;
+    border-radius: 24px 24px 0 0;
+    width: 100%;
+    max-width: 420px;
+    padding: 28px 24px 32px;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .tipo-cap-handle {
+    width: 40px; height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+  .tipo-cap-title {
+    text-align: center;
+    font-size: 17px;
+    font-weight: 700;
+    color: #1B3A6B;
+    margin-bottom: 6px;
+  }
+  .tipo-cap-subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 24px;
+  }
+  .tipo-cap-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .tipo-cap-btn {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .tipo-cap-btn:active { transform: scale(0.98); }
+  .tipo-cap-btn.azul {
+    background: #1B3A6B;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(27,58,107,0.25);
+  }
+  .tipo-cap-btn.rojo {
+    background: #C8102E;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(200,16,46,0.25);
+  }
+  .tipo-cap-btn-icon {
+    width: 46px; height: 46px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .tipo-cap-btn-text { display: flex; flex-direction: column; gap: 2px; }
+  .tipo-cap-btn-title { font-size: 15px; font-weight: 700; }
+  .tipo-cap-btn-desc  { font-size: 11px; opacity: 0.82; font-weight: 400; }
+  .tipo-cap-cancel {
+    margin-top: 14px;
+    width: 100%;
+    padding: 13px;
+    background: none;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #888;
+    cursor: pointer;
+  }
+
   /* ── SCREENS ── */
   .screen { display: none; flex-direction: column; height: 100%; overflow: hidden; min-height: 0; }
   .screen.active { display: flex; }
@@ -1835,7 +1931,7 @@
           <span class="btn-portal-desc">Solicitud, entrega e inspección</span>
         </div>
       </button>
-      <button class="btn-portal charlas" onclick="s8Participantes=[];s7Seleccionados=new Set();goTo('screen7');initScreen7()">
+      <button class="btn-portal charlas" onclick="abrirTipoCapPopup()">
         <div class="btn-portal-icon"><i class="ti ti-presentation" aria-hidden="true"></i></div>
         <div class="btn-portal-text">
           <span class="btn-portal-title">Charlas y Capacitaciones</span>
@@ -2341,6 +2437,32 @@
   </div>
 
 </div><!-- /phone-frame -->
+
+  <!-- ══ POPUP TIPO CAPACITACIÓN ══ -->
+  <div class="tipo-cap-overlay" id="tipoCapOverlay" onclick="cerrarTipoCapPopup(event)">
+    <div class="tipo-cap-popup">
+      <div class="tipo-cap-handle"></div>
+      <div class="tipo-cap-title">¿Qué deseas registrar?</div>
+      <div class="tipo-cap-subtitle">Selecciona el tipo de actividad</div>
+      <div class="tipo-cap-btns">
+        <button class="tipo-cap-btn azul" onclick="iniciarCapacitacion()">
+          <div class="tipo-cap-btn-icon"><i class="ti ti-school"></i></div>
+          <div class="tipo-cap-btn-text">
+            <span class="tipo-cap-btn-title">Capacitación</span>
+            <span class="tipo-cap-btn-desc">Registro formal de capacitación</span>
+          </div>
+        </button>
+        <button class="tipo-cap-btn rojo" onclick="iniciarCharlaGostra()">
+          <div class="tipo-cap-btn-icon"><i class="ti ti-speakerphone"></i></div>
+          <div class="tipo-cap-btn-text">
+            <span class="tipo-cap-btn-title">Charlas GOSTRA</span>
+            <span class="tipo-cap-btn-desc">Registro de charla grupal</span>
+          </div>
+        </button>
+      </div>
+      <button class="tipo-cap-cancel" onclick="cerrarTipoCapPopup()">Cancelar</button>
+    </div>
+  </div>
 
   <!-- ══ CLOCK POPUP ══ -->
   <div class="clock-overlay" id="clockOverlay">
@@ -4115,6 +4237,36 @@
     document.getElementById('firmaPopupTitle').textContent = 'Firma Supervisor';
     document.getElementById('firmaOverlay').classList.add('open');
     setTimeout(() => initPopupCanvas(), 80);
+  }
+
+
+  /* ══ POPUP TIPO CAPACITACIÓN ══ */
+  function abrirTipoCapPopup() {
+    document.getElementById('tipoCapOverlay').classList.add('open');
+  }
+
+  function cerrarTipoCapPopup(e) {
+    if (!e || e.target === document.getElementById('tipoCapOverlay')) {
+      document.getElementById('tipoCapOverlay').classList.remove('open');
+    }
+  }
+
+  function iniciarCapacitacion() {
+    document.getElementById('tipoCapOverlay').classList.remove('open');
+    s8Participantes = [];
+    s7Seleccionados = new Set();
+    goTo('screen7');
+    initScreen7();
+  }
+
+  function iniciarCharlaGostra() {
+    document.getElementById('tipoCapOverlay').classList.remove('open');
+    s8Participantes = [];
+    s7Seleccionados = new Set();
+    goTo('screen7');
+    initScreen7();
+    // Por ahora mismo flujo — aquí puedes diferenciar en el futuro
+    showToast('Charla GOSTRA seleccionada');
   }
 
   /* ── TOAST ── */
