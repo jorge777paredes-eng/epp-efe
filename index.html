@@ -12,7 +12,6 @@
     margin: 0;
     padding: 0;
     height: 100%;
-    width: 100%;
     background: #f0f2f5;
     font-family: 'Segoe UI', Arial, sans-serif;
   }
@@ -23,11 +22,11 @@
     height: 100vh;
     height: 100dvh;
     background: #ffffff;
+    position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     margin: 0 auto;
-    position: relative;
   }
 
 
@@ -445,7 +444,7 @@
   }
 
   /* ── SCREENS ── */
-  .screen { display: none; flex-direction: column; height: 100vh; overflow: hidden; min-height: 0; }
+  .screen { display: none; flex-direction: column; height: 100%; overflow: hidden; min-height: 0; }
   .screen.active { display: flex; }
 
   /* ══════════════════════════════
@@ -2251,7 +2250,7 @@
       <button class="btn-back" onclick="goTo('screen8')" aria-label="Volver">←</button>
       Cierre de Capacitación
     </div>
-    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;">
+    <div style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;">
     <div class="s9-body">
       <div class="s9-section-title">Datos de la Capacitación</div>
       <div class="s9-card">
