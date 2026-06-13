@@ -472,13 +472,12 @@
   /* ══ POPUP TIPO CAPACITACIÓN ══ */
   .tipo-cap-overlay {
     display: none;
-    position: fixed;
+    position: absolute;
     inset: 0;
     background: rgba(0,0,0,0.55);
     z-index: 400;
     align-items: flex-end;
     justify-content: center;
-    padding-bottom: env(safe-area-inset-bottom);
   }
   .tipo-cap-overlay.open { display: flex; }
   .tipo-cap-popup {
@@ -2436,8 +2435,6 @@
     <div class="s1-footer"></div>
   </div>
 
-</div><!-- /phone-frame -->
-
   <!-- ══ POPUP TIPO CAPACITACIÓN ══ -->
   <div class="tipo-cap-overlay" id="tipoCapOverlay" onclick="cerrarTipoCapPopup(event)">
     <div class="tipo-cap-popup">
@@ -2463,6 +2460,8 @@
       <button class="tipo-cap-cancel" onclick="cerrarTipoCapPopup()">Cancelar</button>
     </div>
   </div>
+
+</div><!-- /phone-frame -->
 
   <!-- ══ CLOCK POPUP ══ -->
   <div class="clock-overlay" id="clockOverlay">
