@@ -279,6 +279,7 @@
     padding: 0;
   }
   .s9-input[readonly] { color: #1B3A6B; font-weight: 600; }
+  .s9-input[type="date"] { color: #1B3A6B; font-weight: 600; cursor: pointer; }
   .s9-select {
     width: 100%;
     border: none;
@@ -2280,7 +2281,7 @@
       <div class="s9-card">
         <div class="s9-row">
           <div class="s9-label">Fecha</div>
-          <div class="s9-value"><input class="s9-input" id="s9Fecha" readonly></div>
+          <div class="s9-value"><input class="s9-input" type="date" id="s9Fecha"></div>
         </div>
         <div class="s9-row">
           <div class="s9-label">Hora Inicio</div>
@@ -3929,10 +3930,12 @@
     s9HoraTermino = null;
     s9FirmaSuper  = null;
 
-    // Fecha de hoy
+    // Fecha de hoy por defecto (editable)
     const hoy = new Date();
-    document.getElementById('s9Fecha').value =
-      hoy.toLocaleDateString('es-CL', {day:'numeric', month:'long', year:'numeric'});
+    const yyyy = hoy.getFullYear();
+    const mm   = String(hoy.getMonth() + 1).padStart(2, '0');
+    const dd   = String(hoy.getDate()).padStart(2, '0');
+    document.getElementById('s9Fecha').value = `${yyyy}-${mm}-${dd}`;
 
     // Reset horas
     document.getElementById('s9TextInicio').textContent  = 'Seleccionar hora';
@@ -4044,7 +4047,9 @@
   }
 
   async function s9GuardarCapacitacion() {
-    const fecha   = document.getElementById('s9Fecha').value;
+    const fechaRaw = document.getElementById('s9Fecha').value; // YYYY-MM-DD
+    const [fy, fm, fd] = fechaRaw.split('-');
+    const fecha = `${fd}-${fm}-${fy}`;
     const hInicio = document.getElementById('s9TextInicio').textContent;
     const hTermino = document.getElementById('s9TextTermino').textContent;
     const total   = document.getElementById('s9Total').textContent;
