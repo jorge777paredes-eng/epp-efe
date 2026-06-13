@@ -30,16 +30,17 @@
   }
 
 
-  /* ══════════════════════════════
-     SCREEN 7 — CHARLAS Y CAPACITACIONES
-  ══════════════════════════════ */
-  .s7-body {
+  /* ══ SCREEN 7 — SELECCIÓN FUNCIONARIOS ══ */
+  .s7-wrap {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 16px;
-    gap: 12px;
     overflow: hidden;
+  }
+  .s7-top {
+    padding: 12px 16px 8px;
+    background: #fff;
+    flex-shrink: 0;
   }
   .s7-search-wrap {
     position: relative;
@@ -66,32 +67,31 @@
     font-size: 12px;
     color: #1B3A6B;
     font-weight: 600;
-    padding: 0 4px;
+    padding: 6px 2px 0;
   }
   .s7-list {
     flex: 1;
     overflow-y: auto;
-    border: 1.5px solid #e5e7eb;
-    border-radius: 8px;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
     background: #fff;
   }
   .s7-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 14px;
+    padding: 12px 16px;
     border-bottom: 1px solid #f0f0f0;
     cursor: pointer;
     transition: background 0.1s;
   }
   .s7-item:last-child { border-bottom: none; }
-  .s7-item:active { background: #f5f7ff; }
   .s7-item.selected { background: #eef2ff; }
   .s7-checkbox {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     border: 2px solid #ccc;
-    border-radius: 4px;
+    border-radius: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -108,26 +108,15 @@
     font-size: 13px;
     font-weight: 700;
   }
-  .s7-nombre {
-    font-size: 13px;
-    font-weight: 500;
-    color: #1a1a1a;
-    flex: 1;
-  }
-  .s7-cargo {
-    font-size: 11px;
-    color: #888;
-  }
-  .s7-no-results {
-    padding: 32px;
-    text-align: center;
-    color: #aaa;
-    font-size: 13px;
-  }
-  .s7-footer {
+  .s7-nombre { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+  .s7-cargo  { font-size: 11px; color: #888; margin-top: 1px; }
+  .s7-no-results { padding: 32px; text-align: center; color: #aaa; font-size: 13px; }
+  .s7-bottom {
+    padding: 12px 16px;
     display: flex;
     gap: 10px;
-    padding: 4px 0 8px;
+    background: #fff;
+    flex-shrink: 0;
   }
   .s7-btn-limpiar {
     flex: 1;
@@ -151,9 +140,87 @@
     font-weight: 600;
     cursor: pointer;
   }
-  .s7-btn-confirmar:disabled {
-    background: #ccc;
-    cursor: not-allowed;
+  .s7-btn-confirmar:disabled { background: #ccc; cursor: not-allowed; }
+
+  /* ══ SCREEN 8 — LISTADO PARTICIPANTES ══ */
+  .s8-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .s8-list {
+    flex: 1;
+    overflow-y: auto;
+    margin: 12px 16px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+  }
+  .s8-item {
+    display: flex;
+    align-items: center;
+    padding: 13px 14px;
+    border-bottom: 1px solid #f0f0f0;
+    gap: 10px;
+  }
+  .s8-item:last-child { border-bottom: none; }
+  .s8-nombre {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1a1a1a;
+    line-height: 1.3;
+  }
+  .s8-btn-firmar {
+    background: #1B3A6B;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .s8-btn-firmar.firmado {
+    background: #16a34a;
+  }
+  .s8-btn-eliminar {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #C8102E;
+    font-size: 20px;
+    flex-shrink: 0;
+    padding: 2px 4px;
+  }
+  .s8-bottom {
+    padding: 10px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .s8-btn-agregar {
+    padding: 13px;
+    background: #1B3A6B;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .s8-btn-cerrar {
+    padding: 13px;
+    background: #e5e7eb;
+    color: #555;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
   }
 
   /* ── SCREENS ── */
@@ -1523,7 +1590,7 @@
           <span class="btn-portal-desc">Solicitud, entrega e inspección</span>
         </div>
       </button>
-      <button class="btn-portal charlas" onclick="goTo('screen7');initScreen7()">
+      <button class="btn-portal charlas" onclick="s8Participantes=[];s7Seleccionados=new Set();goTo('screen7');initScreen7()">
         <div class="btn-portal-icon"><i class="ti ti-presentation" aria-hidden="true"></i></div>
         <div class="btn-portal-text">
           <span class="btn-portal-title">Charlas y Capacitaciones</span>
@@ -1922,18 +1989,36 @@
   <div class="screen" id="screen7">
     <div class="screen-header">
       <button class="btn-back" onclick="goTo('screen0')" aria-label="Volver">←</button>
-      Charlas y Capacitaciones
+      Seleccionar Funcionarios
     </div>
-    <div class="s7-body">
-      <div class="s7-search-wrap">
-        <i class="ti ti-search"></i>
-        <input class="s7-search" id="s7SearchInput" type="text" placeholder="Buscar funcionario..." oninput="s7Filtrar()">
+    <div class="s7-wrap">
+      <div class="s7-top">
+        <div class="s7-search-wrap">
+          <i class="ti ti-search"></i>
+          <input class="s7-search" id="s7SearchInput" type="text" placeholder="Buscar funcionario..." oninput="s7Filtrar()">
+        </div>
+        <div class="s7-counter" id="s7Counter">Ningún funcionario seleccionado</div>
       </div>
-      <div class="s7-counter" id="s7Counter">0 seleccionados</div>
       <div class="s7-list" id="s7List"></div>
-      <div class="s7-footer">
+      <div class="s7-bottom">
         <button class="s7-btn-limpiar" onclick="s7Limpiar()">Limpiar</button>
         <button class="s7-btn-confirmar" id="s7BtnConfirmar" onclick="s7Confirmar()" disabled>Confirmar selección</button>
+      </div>
+    </div>
+    <div class="s1-footer"></div>
+  </div>
+
+  <!-- ══ SCREEN 8 — LISTADO PARTICIPANTES ══ -->
+  <div class="screen" id="screen8">
+    <div class="screen-header">
+      <button class="btn-back" onclick="goTo('screen7')" aria-label="Volver">←</button>
+      Listado de Participantes
+    </div>
+    <div class="s8-wrap">
+      <div class="s8-list" id="s8List"></div>
+      <div class="s8-bottom">
+        <button class="s8-btn-agregar" onclick="goTo('screen7')">Seleccionar Alumnos</button>
+        <button class="s8-btn-cerrar" onclick="goTo('screen0')">Cerrar Capacitación</button>
       </div>
     </div>
     <div class="s1-footer"></div>
@@ -3343,16 +3428,17 @@
   }
 
 
-  /* ══════════════════════════════
-     SCREEN 7 — CHARLAS Y CAPACITACIONES
-  ══════════════════════════════ */
-  let s7Seleccionados = new Set(); // índices seleccionados
-  let s7FiltroActual = '';
+  /* ══ SCREEN 7 & 8 — CHARLAS Y CAPACITACIONES ══ */
+  let s7Seleccionados = new Set();
+  let s7FiltroActual  = '';
+  let s8Participantes = []; // [{idx, nombre, cargo, firmado}]
 
   function initScreen7() {
-    s7Seleccionados.clear();
+    // No limpiar selección si viene de screen8 (agregar más)
     document.getElementById('s7SearchInput').value = '';
     s7FiltroActual = '';
+    // Pre-marcar los que ya están en s8
+    s7Seleccionados = new Set(s8Participantes.map(p => p.idx));
     s7RenderList();
     s7ActualizarContador();
   }
@@ -3385,18 +3471,15 @@
   }
 
   function s7Toggle(idx) {
-    if (s7Seleccionados.has(idx)) {
-      s7Seleccionados.delete(idx);
-    } else {
-      s7Seleccionados.add(idx);
-    }
+    s7Seleccionados.has(idx) ? s7Seleccionados.delete(idx) : s7Seleccionados.add(idx);
     s7RenderList();
     s7ActualizarContador();
   }
 
   function s7ActualizarContador() {
     const n = s7Seleccionados.size;
-    document.getElementById('s7Counter').textContent = n === 0 ? 'Ningún funcionario seleccionado' : `${n} funcionario${n > 1 ? 's' : ''} seleccionado${n > 1 ? 's' : ''}`;
+    document.getElementById('s7Counter').textContent =
+      n === 0 ? 'Ningún funcionario seleccionado' : `${n} funcionario${n > 1 ? 's' : ''} seleccionado${n > 1 ? 's' : ''}`;
     document.getElementById('s7BtnConfirmar').disabled = n === 0;
   }
 
@@ -3409,10 +3492,45 @@
   }
 
   function s7Confirmar() {
-    const seleccionados = [...s7Seleccionados].map(idx => funcionarios[idx]);
-    console.log('Funcionarios seleccionados:', seleccionados);
-    showToast(`${seleccionados.length} funcionario${seleccionados.length > 1 ? 's' : ''} confirmado${seleccionados.length > 1 ? 's' : ''}`);
-    // Aquí irá la lógica de guardar en Supabase cuando lo definas
+    // Construir lista de participantes desde los seleccionados
+    s8Participantes = [...s7Seleccionados]
+      .sort((a, b) => funcionarios[a].nombre.localeCompare(funcionarios[b].nombre))
+      .map(idx => ({ idx, nombre: funcionarios[idx].nombre, cargo: funcionarios[idx].cargo, firmado: false }));
+    s8RenderList();
+    goTo('screen8');
+  }
+
+  /* ── SCREEN 8 ── */
+  function s8RenderList() {
+    const list = document.getElementById('s8List');
+    if (s8Participantes.length === 0) {
+      list.innerHTML = '<div class="s7-no-results">Sin participantes</div>';
+      return;
+    }
+    list.innerHTML = s8Participantes.map((p, i) => `
+      <div class="s8-item">
+        <div class="s8-nombre">${p.nombre}</div>
+        <button class="s8-btn-firmar ${p.firmado ? 'firmado' : ''}" onclick="s8Firmar(${i})">
+          ${p.firmado ? '✓ Firmado' : 'Firmar'}
+        </button>
+        <button class="s8-btn-eliminar" onclick="s8Eliminar(${i})" title="Eliminar">
+          <i class="ti ti-trash"></i>
+        </button>
+      </div>
+    `).join('');
+  }
+
+  function s8Firmar(i) {
+    s8Participantes[i].firmado = !s8Participantes[i].firmado;
+    s8RenderList();
+  }
+
+  function s8Eliminar(i) {
+    const idx = s8Participantes[i].idx;
+    s7Seleccionados.delete(idx);
+    s8Participantes.splice(i, 1);
+    s8RenderList();
+    s7ActualizarContador();
   }
 
   /* ── TOAST ── */
