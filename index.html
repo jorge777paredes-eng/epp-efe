@@ -758,7 +758,9 @@
     border-bottom: 1px solid #f0f0f0; gap: 10px;
   }
   .s11-doc-row:last-child { border-bottom: none; }
-  .s11-doc-name { flex: 1; font-size: 12px; color: #C8102E; font-weight: 600; line-height: 1.3; }
+  .s11-doc-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .s11-doc-name { font-size: 12px; color: #C8102E; font-weight: 600; line-height: 1.3; }
+  .s11-doc-fecha { font-size: 10px; color: #16a34a; font-weight: 500; }
   .s11-btn-firmar {
     background: #1B3A6B; color: #fff; border: none;
     border-radius: 6px; padding: 7px 14px; font-size: 12px;
@@ -4622,23 +4624,29 @@
       '<div class="s10-loading" style="grid-column:1/-1"><i class="ti ti-loader" style="animation:spin 1s linear infinite;display:inline-block;margin-right:6px"></i>Cargando datos...</div>';
 
     try {
-      // Cargar ambas tablas en paralelo — cap trae Total_Horas también
-      const [eppResp, capResp] = await Promise.all([
+      // Cargar tablas en paralelo
+      const [eppResp, capResp, gostraResp] = await Promise.all([
         fetch(`${SUPABASE_URL}/rest/v1/${TABLA_EPP}?select=Estado`, { headers: SB_HEADERS }),
-        fetch(`${SUPABASE_URL}/rest/v1/${TABLA_CAP}?select=Tipo_Charla,Total_Horas`, { headers: SB_HEADERS })
+        fetch(`${SUPABASE_URL}/rest/v1/${TABLA_CAP}?select=Tipo_Charla,Total_Horas`, { headers: SB_HEADERS }),
+        fetch(`${SUPABASE_URL}/rest/v1/${TABLA_GOSTRA}?select=Estado`, { headers: { ...SB_HEADERS, 'Range': '0-9999' } })
       ]);
 
-      const eppData = await eppResp.json();
-      const capData = await capResp.json();
+      const eppData    = await eppResp.json();
+      const capData    = await capResp.json();
+      const gostraData = await gostraResp.json();
 
       console.log('EPP data:', eppData.length, eppData[0]);
       console.log('CAP data:', capData.length, capData[0]);
 
-      const pendientes = Array.isArray(eppData) ? eppData.filter(r => r.Estado === 'Pendiente').length : 0;
-      const entregadas = Array.isArray(eppData) ? eppData.filter(r => r.Estado === 'Entregado').length : 0;
-      const totalEpp   = Array.isArray(eppData) ? eppData.length : 0;
-      const caps       = Array.isArray(capData) ? capData.filter(r => r.Tipo_Charla !== 'Charlas GOSTRA').length : 0;
-      const gostra     = Array.isArray(capData) ? capData.filter(r => r.Tipo_Charla === 'Charlas GOSTRA').length : 0;
+      const pendientes    = Array.isArray(eppData) ? eppData.filter(r => r.Estado === 'Pendiente').length : 0;
+      const entregadas    = Array.isArray(eppData) ? eppData.filter(r => r.Estado === 'Entregado').length : 0;
+      const totalEpp      = Array.isArray(eppData) ? eppData.length : 0;
+      const caps          = Array.isArray(capData) ? capData.filter(r => r.Tipo_Charla !== 'Charlas GOSTRA').length : 0;
+      const gostra        = Array.isArray(capData) ? capData.filter(r => r.Tipo_Charla === 'Charlas GOSTRA').length : 0;
+      const gostraLeidos  = Array.isArray(gostraData) ? gostraData.filter(r => r.Estado === 'Leido').length : 0;
+      const gostraPend    = Array.isArray(gostraData) ? gostraData.filter(r => r.Estado !== 'Leido').length : 0;
+      const gostraTotal   = Array.isArray(gostraData) ? gostraData.length : 0;
+      const gostraPct     = gostraTotal > 0 ? Math.round((gostraLeidos / gostraTotal) * 100) : 0;
 
       // Calcular horas por semana
       const semanasMap = {};
@@ -4710,6 +4718,20 @@
           <div class="s10-card-num">${gostra}</div>
           <div class="s10-card-label">Charlas GOSTRA</div>
           <div class="s10-card-sub">registros totales</div>
+        </div>
+        <div class="s10-card" style="grid-column:1/-1;flex-direction:row;align-items:center;gap:14px;padding:14px 16px;">
+          <div class="s10-card-icon verde" style="width:44px;height:44px;flex-shrink:0;"><i class="ti ti-check"></i></div>
+          <div style="flex:1;">
+            <div style="font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">GOSTRA Leídos</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-size:24px;font-weight:800;color:#16a34a;">${gostraLeidos}</div>
+              <div style="font-size:12px;color:#888;">leídos · <span style="color:#C8102E;">${gostraPend} pendientes</span> · de ${gostraTotal}</div>
+            </div>
+            <div style="margin-top:8px;background:#e5e7eb;border-radius:99px;height:6px;overflow:hidden;">
+              <div style="width:${gostraPct}%;background:#16a34a;height:100%;border-radius:99px;transition:width 0.5s;"></div>
+            </div>
+            <div style="font-size:10px;color:#888;margin-top:3px;">${gostraPct}% completado</div>
+          </div>
         </div>`;
 
       // Render tabla de horas por semana
@@ -4795,12 +4817,42 @@
   let s11Funcionarios = []; // [{idx, nombre, rut, cargo, docs:[{nombre,firmado,firma}]}]
   let s11FirmaTarget  = null; // {funcIdx, docIdx}
 
-  function s11RenderList() {
+  async function s11RenderList() {
     const body = document.getElementById('s11Body');
     if (!s11Funcionarios.length) {
       body.innerHTML = '<div class="s10-loading">Sin funcionarios seleccionados</div>';
       return;
     }
+
+    // Mostrar loading
+    body.innerHTML = '<div class="s10-loading"><i class="ti ti-loader" style="animation:spin 1s linear infinite;display:inline-block;margin-right:6px"></i>Cargando estados...</div>';
+
+    try {
+      // Consultar BD_GOSTRA para obtener estado real de cada documento
+      const nombres = s11Funcionarios.map(f => `Funcionario=eq.${encodeURIComponent(f.nombre)}`).join(',');
+      const resp = await fetch(
+        `${SUPABASE_URL}/rest/v1/${TABLA_GOSTRA}?select=Funcionario,Documento_GOSTRA,Estado,Firma,Fecha&or=(${nombres})`,
+        { headers: { ...SB_HEADERS, 'Range': '0-9999' } }
+      );
+      const registros = resp.ok ? await resp.json() : [];
+
+      // Mapear estado real a s11Funcionarios
+      s11Funcionarios.forEach(f => {
+        f.docs.forEach(d => {
+          const reg = Array.isArray(registros)
+            ? registros.find(r => r.Funcionario === f.nombre && r.Documento_GOSTRA === d.nombre)
+            : null;
+          if (reg) {
+            d.firmado = reg.Estado === 'Leido';
+            d.firma   = reg.Firma || null;
+            d.fecha   = reg.Fecha || null;
+          }
+        });
+      });
+    } catch(e) {
+      console.error('s11RenderList error cargando estados:', e);
+    }
+
     body.innerHTML = s11Funcionarios.map((f, fi) => `
       <div class="s11-func-card">
         <div class="s11-func-header">
@@ -4809,7 +4861,10 @@
         </div>
         ${f.docs.map((d, di) => `
           <div class="s11-doc-row">
-            <div class="s11-doc-name">${d.nombre}</div>
+            <div class="s11-doc-info">
+              <div class="s11-doc-name">${d.nombre}</div>
+              ${d.firmado && d.fecha ? `<div class="s11-doc-fecha">Leído el ${d.fecha}</div>` : ''}
+            </div>
             <button class="s11-btn-firmar ${d.firmado ? 'leido' : ''}"
               onclick="s11AbrirFirma(${fi},${di})"
               ${d.firmado ? 'disabled' : ''}>
@@ -4838,19 +4893,19 @@
     s11Funcionarios.forEach(f => {
       f.docs.forEach(d => {
         if (d.firmado) {
+          const hoy = new Date();
+          const fechaHoy = String(hoy.getDate()).padStart(2,'0') + '-' +
+                           String(hoy.getMonth()+1).padStart(2,'0') + '-' + hoy.getFullYear();
           firmados.push({
             Funcionario: f.nombre,
             Rut: f.rut,
             Cargo: f.cargo,
             Documento_GOSTRA: d.nombre,
-            Fecha: (() => {
-              const h = new Date();
-              return String(h.getDate()).padStart(2,'0') + '-' +
-                     String(h.getMonth()+1).padStart(2,'0') + '-' + h.getFullYear();
-            })(),
+            Fecha: fechaHoy,
             Firma: d.firma,
             Estado: 'Leido'
           });
+          d.fecha = fechaHoy; // actualizar en memoria
         }
       });
     });
