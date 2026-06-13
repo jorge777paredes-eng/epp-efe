@@ -4492,18 +4492,36 @@
     const nombre = tipo === 'epp' ? 'Solicitudes_EPP' : 'Capacitaciones';
     showToast('Descargando...');
     try {
-      const resp = await fetch(`${SUPABASE_URL}/rest/v1/${tabla}?select=*&order=ID.asc`, { headers: SB_HEADERS });
-      const data = await resp.json();
-      if (!data.length) { showToast('Sin datos para descargar'); return; }
+      // Sin order para evitar problemas con nombre del campo ID
+      const resp = await fetch(`${SUPABASE_URL}/rest/v1/${tabla}?select=*`, { headers: SB_HEADERS });
 
-      // Generar CSV
-      const keys = Object.keys(data[0]).filter(k => k !== 'Firma_Alumno' && k !== 'Firma_Supervisor');
+      if (!resp.ok) {
+        const err = await resp.text();
+        console.error('Fetch error:', err);
+        showToast('Error al conectar: ' + resp.status);
+        return;
+      }
+
+      const data = await resp.json();
+      console.log('Datos descargados:', data.length, data);
+
+      if (!Array.isArray(data) || data.length === 0) {
+        showToast('Sin datos para descargar');
+        return;
+      }
+
+      // Generar CSV — excluir firmas (base64 muy pesado)
+      const excluir = ['Firma_Alumno', 'Firma_Supervisor', 'firma_alumno', 'firma_supervisor'];
+      const keys = Object.keys(data[0]).filter(k => !excluir.includes(k));
       const csv  = [
         keys.join(','),
-        ...data.map(row => keys.map(k => `"${(row[k]||'').toString().replace(/"/g,'""')}"`).join(','))
+        ...data.map(row => keys.map(k => {
+          const val = (row[k] === null || row[k] === undefined) ? '' : String(row[k]);
+          return '"' + val.replace(/"/g, '""') + '"';
+        }).join(','))
       ].join('\n');
 
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
       a.href     = url;
@@ -4512,7 +4530,7 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      showToast('✓ Archivo descargado');
+      showToast('✓ ' + data.length + ' registros descargados');
     } catch(e) {
       console.error('s10Descargar error:', e);
       showToast('Error al descargar');
